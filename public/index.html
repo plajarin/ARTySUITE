@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>ArtyFlow · Tu arte habla</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f7f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    .page { display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; min-height: 100vh; }
+
+    .logo { text-align: center; margin-bottom: 0.2rem; }
+    .logo-arty { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #111; }
+    .logo-flow { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #D4006B; }
+    .logo-dot  { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #00B4B4; margin-left: 3px; vertical-align: super; }
+    .tagline   { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #aaa; margin-bottom: 2rem; }
+
+    .card { background: #fff; border-radius: 20px; padding: 1.8rem 1.6rem; width: 100%; max-width: 460px; box-shadow: 0 2px 24px rgba(0,0,0,0.08); animation: fadeIn 0.4s ease; }
+
+    .dropzone { border: 2px dashed #ddd; border-radius: 14px; padding: 2.5rem 1rem; text-align: center; cursor: pointer; background: #fafafa; transition: all 0.2s; }
+    .dropzone.over, .dropzone:hover { border-color: #D4006B; background: rgba(212,0,107,0.03); }
+    .dropzone-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .dropzone-title { font-family: 'Playfair Display', serif; color: #D4006B; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
+    .dropzone-sub   { color: #bbb; font-size: 0.78rem; }
+
+    .preview-img { width: 100%; border-radius: 12px; margin-bottom: 1.2rem; max-height: 200px; object-fit: cover; border: 1px solid #eee; display: none; }
+
+    .field-label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #00B4B4; margin-bottom: 0.45rem; margin-top: 1.1rem; }
+    .field-note  { font-size: 0.72rem; color: #bbb; margin-top: 0.4rem; font-style: italic; }
+
+    input[type="date"], input[type="email"], input[type="tel"] {
+      width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
+      padding: 0.75rem 1rem; font-size: 0.95rem; color: #111;
+      background: #fff; outline: none; font-family: 'DM Sans', sans-serif;
+    }
+
+    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 1.4rem 0; }
+
+    .consent-box { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; background: #f9f9f9; border: 1.5px solid #eee; border-radius: 12px; padding: 0.9rem 1rem; transition: border-color 0.2s; }
+    .consent-box.checked { border-color: #00B4B4; }
+    .consent-box input { width: 18px; height: 18px; accent-color: #00B4B4; flex-shrink: 0; margin-top: 2px; cursor: pointer; }
+    .consent-text { font-size: 0.87rem; color: #444; line-height: 1.5; }
+
+    .contact-section { margin-top: 1rem; animation: fadeIn 0.3s ease; }
+    .contact-toggle  { display: flex; gap: 0.5rem; margin-bottom: 0.7rem; }
+    .contact-btn { flex: 1; padding: 0.55rem; border-radius: 10px; border: 1.5px solid #ddd; background: #fff; color: #999; cursor: pointer; font-size: 0.85rem; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .contact-btn.active { border-color: #00B4B4; background: rgba(0,180,180,0.07); color: #00B4B4; font-weight: 700; }
+
+    .btn-primary { width: 100%; padding: 0.9rem; border-radius: 12px; border: none; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: #D4006B; color: #fff; letter-spacing: 0.04em; box-shadow: 0 4px 14px rgba(212,0,107,0.25); margin-top: 1.6rem; transition: opacity 0.2s; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-outline { width: 100%; padding: 0.9rem; border-radius: 12px; border: 1.5px solid #D4006B; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: #fff; color: #D4006B; letter-spacing: 0.04em; margin-top: 0.7rem; transition: opacity 0.2s; }
+
+    .error-msg { color: #D4006B; font-size: 0.82rem; margin-top: 1rem; text-align: center; }
+
+    /* Spinner */
+    .spinner-wrap { text-align: center; padding: 3rem 0; }
+    .spinner { width: 52px; height: 52px; border-radius: 50%; border: 3px solid #eee; border-top-color: #D4006B; margin: 0 auto 1.4rem; animation: spin 0.8s linear infinite; }
+    .spinner-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #111; margin-bottom: 0.5rem; }
+    .spinner-sub   { color: #bbb; font-size: 0.82rem; }
+
+    /* Result */
+    .result-title  { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #111; margin-bottom: 0.5rem; }
+    .lp-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,180,180,0.08); border: 1px solid rgba(0,180,180,0.3); border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.78rem; color: #00B4B4; font-weight: 700; margin-bottom: 0.8rem; }
+    .section-title { font-family: 'Playfair Display', serif; color: #D4006B; font-weight: 700; font-size: 0.95rem; margin: 1.2rem 0 0.4rem; border-left: 3px solid #00B4B4; padding-left: 0.6rem; }
+    .section-body  { color: #333; font-size: 0.92rem; line-height: 1.75; }
+    .saved-msg { margin-top: 1.4rem; padding: 0.8rem 1rem; background: rgba(0,180,180,0.06); border: 1px solid rgba(0,180,180,0.25); border-radius: 10px; font-size: 0.8rem; color: #00B4B4; font-weight: 500; }
+
+    .footer { color: #ccc; font-size: 0.7rem; margin-top: 1.8rem; text-align: center; }
+
+    /* Screens */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes fadeIn  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="logo">
+    <span class="logo-arty">Arty</span><span class="logo-flow">Flow</span><span class="logo-dot"></span>
+  </div>
+  <p class="tagline">by ArtyVinos · Tu arte habla</p>
+
+  <div class="card">
+
+    <!-- PANTALLA 1: SUBIR IMAGEN -->
+    <div class="screen active" id="screen-upload">
+      <p style="text-align:center;color:#666;font-size:0.92rem;margin-bottom:1.4rem;line-height:1.6;">
+        Sube una foto de tu obra y descubre lo que dice sobre ti esta noche.
+      </p>
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
+        <div class="dropzone-icon">🎨</div>
+        <p class="dropzone-title">Toca para subir tu obra</p>
+        <p class="dropzone-sub">JPG o PNG desde tu carrete</p>
+      </div>
+      <input type="file" id="file-input" accept="image/*" style="display:none" />
+      <p class="error-msg" id="upload-error"></p>
+    </div>
+
+    <!-- PANTALLA 2: FORMULARIO -->
+    <div class="screen" id="screen-form">
+      <img class="preview-img" id="preview-img" alt="Tu obra" />
+
+      <label class="field-label">Fecha de nacimiento</label>
+      <input type="date" id="birth-date" />
+      <p class="field-note">Solo para tu lectura numerologica. No la almacenamos.</p>
+
+      <hr class="divider" />
+
+      <div class="consent-box" id="consent-box" onclick="toggleConsent()">
+        <input type="checkbox" id="consent-check" onclick="event.stopPropagation();toggleConsent()" />
+        <span class="consent-text">Quiero seguir conociendo lo que ArtyVinos puede ofrecerme en el futuro</span>
+      </div>
+
+      <div class="contact-section" id="contact-section" style="display:none">
+        <label class="field-label">Como prefieres que te contactemos</label>
+        <div class="contact-toggle">
+          <button class="contact-btn active" id="btn-email" onclick="setContact('email')">📧 Email</button>
+          <button class="contact-btn" id="btn-whatsapp" onclick="setContact('whatsapp')">💬 WhatsApp</button>
+        </div>
+        <input type="email" id="contact-input" placeholder="tu@email.com" />
+      </div>
+
+      <p class="error-msg" id="form-error"></p>
+      <button class="btn-primary" onclick="startAnalysis()">Revelar mi lectura ✨</button>
+      <button class="btn-outline" onclick="showScreen('upload')">Cambiar imagen</button>
+    </div>
+
+    <!-- PANTALLA 3: ANALIZANDO -->
+    <div class="screen" id="screen-analyzing">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <p class="spinner-title">Leyendo tu obra...</p>
+        <p class="spinner-sub" id="spinner-sub">Analizando colores, trazos y energia</p>
+      </div>
+    </div>
+
+    <!-- PANTALLA 4: RESULTADO -->
+    <div class="screen" id="screen-result">
+      <img class="preview-img" id="result-img" alt="Tu obra" />
+      <p class="result-title">Tu lectura de esta noche</p>
+      <div id="lp-badge"></div>
+      <div id="result-text"></div>
+      <div class="saved-msg" id="saved-msg" style="display:none">
+        ✅ Te avisaremos con las proximas novedades de ArtyVinos
+      </div>
+      <hr class="divider" />
+      <button class="btn-primary" onclick="reset()">Nueva lectura 🎨</button>
+    </div>
+
+  </div>
+  <p class="footer">ArtyVinos · Calle del Capitan Segarra 25, Alicante</p>
+</div>
+
+<script>
+// ── Estado ───────────────────────────────────────────────────────
+let imageFile = null;
+let imageDataUrl = null;
+let compressedB64 = null;
+let consentChecked = false;
+let contactType = 'email';
+
+const LP = {
+  1:'Liderazgo e independencia creadora', 2:'Sensibilidad, intuicion y armonia',
+  3:'Expresion, creatividad y alegria',   4:'Solidez, metodo y construccion',
+  5:'Libertad, aventura y transformacion',6:'Amor, cuidado y belleza como mision',
+  7:'Profundidad, misterio e introspeccion', 8:'Poder, ambicion y manifestacion',
+  9:'Compasion, sabiduria y entrega', 11:'Numero maestro - Intuicion elevada',
+  22:'Numero maestro - Gran constructor',  33:'Numero maestro - Maestro compasivo'
+};
+
+// ── Pantallas ────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+// ── Drag & drop ──────────────────────────────────────────────────
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
+document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
+
+function handleFile(file) {
+  if (!file || !file.type.startsWith('image/')) {
+    document.getElementById('upload-error').textContent = 'El archivo debe ser una imagen';
+    return;
+  }
+  imageFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imageDataUrl = e.target.result;
+    document.getElementById('preview-img').src = imageDataUrl;
+    document.getElementById('preview-img').style.display = 'block';
+    document.getElementById('result-img').src = imageDataUrl;
+    document.getElementById('result-img').style.display = 'block';
+    showScreen('form');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Consent ──────────────────────────────────────────────────────
+function toggleConsent() {
+  consentChecked = !consentChecked;
+  document.getElementById('consent-check').checked = consentChecked;
+  document.getElementById('consent-box').classList.toggle('checked', consentChecked);
+  document.getElementById('contact-section').style.display = consentChecked ? 'block' : 'none';
+}
+
+function setContact(type) {
+  contactType = type;
+  document.getElementById('btn-email').classList.toggle('active', type === 'email');
+  document.getElementById('btn-whatsapp').classList.toggle('active', type === 'whatsapp');
+  const inp = document.getElementById('contact-input');
+  inp.type = type === 'email' ? 'email' : 'tel';
+  inp.placeholder = type === 'email' ? 'tu@email.com' : '+34 600 000 000';
+}
+
+// ── Numerología ──────────────────────────────────────────────────
+function calcLifePath(dateStr) {
+  const digits = dateStr.replace(/-/g,'').split('').map(Number);
+  let sum = digits.reduce((a,b) => a+b, 0);
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+    sum = String(sum).split('').map(Number).reduce((a,b) => a+b, 0);
+  }
+  return sum;
+}
+
+// ── Comprimir imagen ─────────────────────────────────────────────
+function compressImage() {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h*MAX/w); w = MAX; } }
+      else        { if (h > MAX) { w = Math.round(w*MAX/h); h = MAX; } }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      res(canvas.toDataURL('image/jpeg', 0.75).split(',')[1]);
+    };
+    img.src = imageDataUrl;
+  });
+}
+
+// ── Análisis ─────────────────────────────────────────────────────
+async function startAnalysis() {
+  document.getElementById('form-error').textContent = '';
+  const birthDate = document.getElementById('birth-date').value;
+  let lifePath = null, lpDesc = '';
+  if (birthDate) {
+    lifePath = calcLifePath(birthDate);
+    lpDesc = LP[lifePath] || '';
+  }
+  document.getElementById('spinner-sub').textContent =
+    birthDate ? 'Cruzando energia numerologica con expresion pictorica' : 'Analizando colores, trazos y energia';
+  showScreen('analyzing');
+
+  try {
+    compressedB64 = await compressImage();
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64: compressedB64, mimeType: 'image/jpeg', lifePath, lpDesc }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Error del servidor');
+    renderResult(data.result, lifePath, lpDesc);
+  } catch (err) {
+    document.getElementById('form-error').textContent = 'Error: ' + err.message;
+    showScreen('form');
+  }
+}
+
+// ── Render resultado ─────────────────────────────────────────────
+function renderResult(text, lifePath, lpDesc) {
+  if (lifePath) {
+    document.getElementById('lp-badge').innerHTML =
+      '<div class="lp-badge">Camino de Vida ' + lifePath + ' · ' + (LP[lifePath] || lpDesc) + '</div>';
+  } else {
+    document.getElementById('lp-badge').innerHTML = '';
+  }
+
+  const TITLES = ['LO QUE TU OBRA REVELA', 'TU ESENCIA NUMEROLOGICA', 'EL MENSAJE DE TU CUADRO'];
+  const lines = text.split('\n').map(l => l.replace(/\*\*/g,'').trim()).filter(Boolean);
+  let html = '';
+  let inSection = false;
+  for (const line of lines) {
+    const isTitle = TITLES.some(t => line.toUpperCase().includes(t));
+    if (isTitle) {
+      html += '<p class="section-title">' + line + '</p>';
+      inSection = true;
+    } else if (inSection) {
+      html += '<p class="section-body">' + line + '</p>';
+    }
+  }
+  if (!html) html = '<p class="section-body">' + text + '</p>';
+  document.getElementById('result-text').innerHTML = html;
+
+  const contact = document.getElementById('contact-input').value.trim();
+  document.getElementById('saved-msg').style.display = (consentChecked && contact) ? 'block' : 'none';
+
+  showScreen('result');
+}
+
+// ── Reset ────────────────────────────────────────────────────────
+function reset() {
+  imageFile = null; imageDataUrl = null; compressedB64 = null;
+  consentChecked = false; contactType = 'email';
+  document.getElementById('birth-date').value = '';
+  document.getElementById('consent-check').checked = false;
+  document.getElementById('consent-box').classList.remove('checked');
+  document.getElementById('contact-section').style.display = 'none';
+  document.getElementById('contact-input').value = '';
+  document.getElementById('file-input').value = '';
+  document.getElementById('upload-error').textContent = '';
+  document.getElementById('form-error').textContent = '';
+  document.getElementById('preview-img').style.display = 'none';
+  document.getElementById('result-img').style.display = 'none';
+  showScreen('upload');
+}
+</script>
+</body>
+</html>
