@@ -5,114 +5,185 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ArtySuite · ArtyVinos</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;overflow:hidden;background:#f7f7f5;font-family:'DM Sans',sans-serif}
+    html,body{height:100%;overflow:hidden;background:#fff;font-family:'DM Sans',sans-serif}
     :root{--m:#D4006B;--t:#00B4B4;--dark:#111}
     .screen{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .screen.active{display:flex;flex-direction:column}
 
-    /* HOME */
-    #screen-home{background:var(--dark);align-items:center;justify-content:center;padding:2rem 1.5rem}
-    .home-logo{text-align:center;margin-bottom:0.5rem}
-    .home-logo .arty{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:#fff}
-    .home-logo .suite{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--m)}
-    .home-logo .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--t);margin-left:4px;vertical-align:super}
-    .home-tagline{font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-align:center;margin-bottom:3rem}
-    .home-cards{width:100%;max-width:400px;display:flex;flex-direction:column;gap:1rem}
-    .app-card{border-radius:18px;padding:1.6rem 1.4rem;cursor:pointer;transition:transform 0.15s}
-    .app-card:active{transform:scale(0.97)}
-    .app-card-copy{background:linear-gradient(135deg,#00B4B4,#007f7f)}
-    .app-card-flow{background:linear-gradient(135deg,#D4006B,#8f0048)}
-    .app-card-num{font-family:'Playfair Display',serif;font-size:1rem;color:rgba(255,255,255,0.6);margin-bottom:0.3rem}
-    .app-card-name{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:0.5rem}
-    .app-card-desc{font-size:0.85rem;color:rgba(255,255,255,0.75);line-height:1.5}
-    .app-card-arrow{font-size:1.4rem;margin-top:1rem;color:rgba(255,255,255,0.5)}
-    .home-footer{color:rgba(255,255,255,0.2);font-size:0.68rem;margin-top:2.5rem;text-align:center}
+    /* ══ HOME ══ */
+    #screen-home{
+      background: linear-gradient(160deg, #fff5f9 0%, #fff 40%, #f0fafa 100%);
+      align-items:center;
+      padding:2.5rem 1.5rem 3rem;
+    }
+    .home-logo-wrap{text-align:center;margin-bottom:0.5rem}
+    .home-logo-box{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:90px;height:90px;border-radius:22px;
+      background:#fff;
+      border:2.5px solid var(--m);
+      box-shadow:0 4px 20px rgba(212,0,107,0.15);
+      margin-bottom:0.8rem;position:relative;
+    }
+    .home-logo-box .dot{
+      position:absolute;bottom:-6px;right:-6px;
+      width:18px;height:18px;border-radius:50%;
+      background:var(--t);border:3px solid #fff;
+    }
+    .home-logo-text{
+      font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;
+      letter-spacing:-0.01em;color:var(--dark);line-height:1;
+    }
+    .home-logo-text em{font-style:italic;color:var(--m)}
+    .home-by{
+      font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;
+      color:var(--t);font-weight:700;margin-bottom:2.5rem;
+    }
+    .home-section-label{
+      font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;
+      color:#bbb;margin-bottom:0.8rem;align-self:flex-start;width:100%;max-width:420px;
+    }
+    .home-cards{width:100%;max-width:420px;display:flex;flex-direction:column;gap:0.8rem;margin-bottom:0.5rem}
+    .pill-btn{
+      display:flex;align-items:center;gap:1rem;
+      padding:1rem 1.2rem;border-radius:16px;border:none;cursor:pointer;
+      width:100%;text-align:left;transition:transform 0.12s,box-shadow 0.12s;
+    }
+    .pill-btn:active{transform:scale(0.97)}
+    .pill-icon{
+      width:48px;height:48px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.5rem;flex-shrink:0;background:rgba(255,255,255,0.25);
+    }
+    .pill-texts{flex:1}
+    .pill-title{font-size:1.05rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:0.15rem}
+    .pill-sub{font-size:0.8rem;color:rgba(255,255,255,0.75);line-height:1.3}
+    .pill-arrow{font-size:1.1rem;color:rgba(255,255,255,0.5)}
 
-    /* ARTYCOPY */
+    .pill-copy{background:linear-gradient(135deg,var(--m),#a8005a);box-shadow:0 6px 20px rgba(212,0,107,0.3)}
+    .pill-flow{background:linear-gradient(135deg,var(--t),#007f7f);box-shadow:0 6px 20px rgba(0,180,180,0.3)}
+
+    .more-label{
+      font-size:0.75rem;color:#bbb;text-align:center;
+      margin:0.8rem 0 0.6rem;width:100%;max-width:420px;
+      display:flex;align-items:center;gap:0.5rem;
+    }
+    .more-label::before,.more-label::after{content:'';flex:1;height:1px;background:#eee}
+
+    .pill-light{
+      background:#fff;border:1.5px solid #eee;
+      box-shadow:0 2px 8px rgba(0,0,0,0.05);
+    }
+    .pill-light .pill-title{color:var(--dark)}
+    .pill-light .pill-sub{color:#aaa}
+    .pill-light .pill-arrow{color:#ddd}
+    .pill-dark{
+      background:var(--dark);
+      box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    .home-footer{color:#ddd;font-size:0.68rem;margin-top:1.5rem;text-align:center}
+
+    /* ══ QR MODAL ══ */
+    .modal-overlay{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+      z-index:100;align-items:center;justify-content:center;padding:1.5rem;
+    }
+    .modal-overlay.open{display:flex}
+    .modal-card{
+      background:#fff;border-radius:24px;padding:2rem 1.5rem;
+      width:100%;max-width:340px;text-align:center;
+      box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    }
+    .modal-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--dark);margin-bottom:0.3rem}
+    .modal-sub{font-size:0.85rem;color:#aaa;margin-bottom:1.5rem;line-height:1.5}
+    #qr-container{display:flex;justify-content:center;margin-bottom:1.2rem}
+    #qr-container canvas,#qr-container img{border-radius:12px;border:1px solid #f0f0f0}
+    .modal-url{font-size:0.78rem;color:var(--t);background:#f0fafa;border-radius:8px;padding:0.5rem 0.8rem;margin-bottom:1.2rem;word-break:break-all}
+    .modal-close{width:100%;padding:0.8rem;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:700;background:#f5f5f5;color:#555}
+
+    /* ══ ARTYCOPY ══ */
     #screen-copy{background:#000;align-items:stretch;overflow:hidden}
     .copy-header{background:#111;padding:0.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
     .copy-header-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff}
-    .copy-header-logo span{color:var(--t)}
+    .copy-header-logo em{font-style:italic;color:var(--m)}
     .copy-back{background:none;border:none;color:rgba(255,255,255,0.5);font-size:0.85rem;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-    /* Canvas: ocupa todo el espacio disponible */
     .copy-canvas-wrap{flex:1;position:relative;overflow:hidden;touch-action:none}
     #copy-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
     #copy-overlay{
-      position:absolute;
-      top:50%;left:50%;
+      position:absolute;top:50%;left:50%;
       transform-origin:center center;
       transform:translate(-50%,-50%) scale(1) rotate(0deg);
-      pointer-events:none;
-      display:none;
-      max-width:none;
-      width:80%;
+      pointer-events:none;display:none;max-width:none;width:80%;
     }
 
-    /* Botón flotante ⚙️ */
     .copy-toggle-btn{
       position:absolute;bottom:1.2rem;right:1.2rem;
-      width:48px;height:48px;border-radius:50%;
-      background:rgba(0,180,180,0.9);border:none;
+      width:50px;height:50px;border-radius:50%;
+      background:rgba(0,180,180,0.92);border:none;
       color:#fff;font-size:1.3rem;cursor:pointer;
       display:flex;align-items:center;justify-content:center;
       box-shadow:0 4px 14px rgba(0,0,0,0.4);z-index:20;
-      transition:transform 0.2s;
     }
-    .copy-toggle-btn:active{transform:scale(0.92)}
-
-    /* Panel colapsable */
-    .copy-panel{
-      position:absolute;bottom:0;left:0;right:0;
-      background:#111;border-radius:20px 20px 0 0;
-      padding:1.2rem 1.2rem 2rem;
-      transform:translateY(100%);
-      transition:transform 0.3s ease;
-      z-index:30;
-    }
-    .copy-panel.open{transform:translateY(0)}
-    .copy-panel-handle{width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 1.2rem}
-    .copy-ctrl-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.9rem}
-    .copy-ctrl-label{font-size:0.72rem;color:rgba(255,255,255,0.4);width:70px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.08em}
-    .copy-slider{flex:1;accent-color:var(--t);height:4px;cursor:pointer}
-    .copy-ctrl-val{font-size:0.75rem;color:rgba(255,255,255,0.5);width:38px;text-align:right}
-    .copy-btn-row{display:flex;gap:0.7rem;margin-top:0.8rem}
-    .copy-btn{flex:1;padding:0.85rem;border-radius:12px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700}
-    .copy-btn-img{background:var(--t);color:#fff}
-    .copy-btn-flow{background:var(--m);color:#fff}
-    .copy-close-panel{width:100%;padding:0.7rem;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);margin-top:0.6rem}
-
-    /* Mini indicadores visibles cuando panel cerrado */
     .copy-indicators{
       position:absolute;bottom:1.2rem;left:1.2rem;
       display:flex;flex-direction:column;gap:0.3rem;z-index:20;
     }
-    .copy-ind{background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:6px;backdrop-filter:blur(4px)}
+    .copy-ind{background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:6px}
 
-    /* ARTYFLOW */
-    #screen-upload{background:#fff;align-items:stretch}
-    .upload-top{background:var(--dark);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem 2.5rem;position:relative;min-height:58vh}
-    .upload-top::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:#fff;border-radius:32px 32px 0 0}
-    .logo-upload{position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);white-space:nowrap}
-    .logo-upload .arty{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:#fff}
-    .logo-upload .flow{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--m)}
-    .logo-upload .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--t);margin-left:3px;vertical-align:super}
-    .upload-headline{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:#fff;text-align:center;line-height:1.15;margin-bottom:1rem}
+    .copy-panel{
+      position:absolute;bottom:0;left:0;right:0;
+      background:#111;border-radius:20px 20px 0 0;
+      padding:1rem 1.2rem 2rem;
+      transform:translateY(100%);transition:transform 0.3s ease;z-index:30;
+    }
+    .copy-panel.open{transform:translateY(0)}
+    .copy-panel-handle{width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 1rem}
+    .copy-ctrl-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem}
+    .copy-ctrl-label{font-size:0.7rem;color:rgba(255,255,255,0.4);width:68px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.08em}
+    .copy-slider{flex:1;accent-color:var(--t);height:4px;cursor:pointer}
+    .copy-ctrl-val{font-size:0.73rem;color:rgba(255,255,255,0.5);width:38px;text-align:right}
+    .copy-btn-row{display:flex;gap:0.6rem;margin-top:0.8rem}
+    .copy-btn{flex:1;padding:0.8rem;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700}
+    .copy-btn-cam{background:var(--m);color:#fff}
+    .copy-btn-lib{background:#2a2a2a;color:rgba(255,255,255,0.7);border:1px solid #333}
+    .copy-btn-flow{background:var(--t);color:#fff}
+    .copy-close-panel{width:100%;padding:0.65rem;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.35);margin-top:0.5rem}
+
+    /* ══ ARTYFLOW ══ */
+    #screen-upload{
+      background:linear-gradient(160deg,#fff5f9 0%,#fff 40%,#f0fafa 100%);
+      align-items:center;padding:2.5rem 1.5rem 3rem;
+    }
+    .upload-logo-wrap{text-align:center;margin-bottom:0.4rem}
+    .upload-logo-box{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:70px;height:70px;border-radius:18px;background:#fff;
+      border:2.5px solid var(--t);box-shadow:0 4px 16px rgba(0,180,180,0.2);
+      margin-bottom:0.6rem;position:relative;
+    }
+    .upload-logo-box .dot{position:absolute;bottom:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:var(--m);border:2px solid #fff}
+    .upload-logo-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--dark);line-height:1}
+    .upload-logo-title em{font-style:italic;color:var(--t)}
+    .upload-by{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--m);font-weight:700;margin-bottom:1.5rem}
+
+    .upload-headline{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--dark);text-align:center;line-height:1.2;margin-bottom:0.7rem}
     .upload-headline em{font-style:italic;color:var(--m)}
-    .upload-sub{color:rgba(255,255,255,0.75);font-size:1.05rem;font-weight:700;text-align:center;line-height:1.6;max-width:300px}
-    .upload-bottom{background:#fff;padding:2rem 1.5rem 3rem;display:flex;flex-direction:column;gap:0.9rem}
-    .btn-camera{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;background:var(--m);color:#fff;letter-spacing:0.03em;box-shadow:0 6px 20px rgba(212,0,107,0.3);display:flex;align-items:center;justify-content:center;gap:0.6rem}
-    .btn-camera svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    .upload-note{font-size:0.92rem;font-weight:700;color:#555;text-align:center;line-height:1.55}
-    .error-msg{color:var(--m);font-size:0.82rem;text-align:center;min-height:1.2rem}
+    .upload-sub{color:#888;font-size:0.9rem;font-weight:500;text-align:center;line-height:1.6;max-width:300px;margin-bottom:2rem}
 
+    .upload-btns{width:100%;max-width:420px;display:flex;flex-direction:column;gap:0.8rem}
+    .error-msg{color:var(--m);font-size:0.82rem;text-align:center;min-height:1.2rem;margin-top:0.3rem}
+
+    /* ══ FORM ══ */
     #screen-form{background:#f7f7f5;align-items:center;padding:0 0 4rem}
     .form-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;position:relative;text-align:center}
     .form-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
     .form-header .logo-small{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:1rem}
-    .form-header .logo-small span{color:var(--m)}
+    .form-header .logo-small em{font-style:italic;color:var(--t)}
     .preview-img{width:100%;max-width:340px;height:180px;object-fit:cover;border-radius:14px;border:3px solid rgba(255,255,255,0.15);display:none;margin:0 auto}
     .form-card{background:#fff;border-radius:20px;padding:1.8rem 1.5rem;width:calc(100% - 2rem);max-width:440px;box-shadow:0 2px 20px rgba(0,0,0,0.07);margin-top:-1rem}
     .field-label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--t);margin-bottom:0.45rem;margin-top:1.1rem}
@@ -129,19 +200,21 @@
     .contact-toggle{display:flex;gap:0.5rem;margin-bottom:0.7rem}
     .contact-btn{flex:1;padding:0.55rem;border-radius:10px;border:1.5px solid #e8e8e8;background:#fff;color:#999;cursor:pointer;font-size:0.85rem;font-family:'DM Sans',sans-serif;transition:all 0.2s}
     .contact-btn.active{border-color:var(--t);background:rgba(0,180,180,0.07);color:var(--t);font-weight:700}
-    .btn-primary{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;background:var(--m);color:#fff;letter-spacing:0.04em;box-shadow:0 4px 16px rgba(212,0,107,0.25);margin-top:1.6rem}
+    .btn-primary{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;background:var(--m);color:#fff;box-shadow:0 4px 16px rgba(212,0,107,0.25);margin-top:1.6rem}
     .btn-outline{width:100%;padding:0.85rem;border-radius:14px;border:1.5px solid #e8e8e8;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;background:#fff;color:#999;margin-top:0.7rem}
 
+    /* ══ ANALIZANDO ══ */
     #screen-analyzing{background:var(--dark);align-items:center;justify-content:center;text-align:center;padding:2rem}
     .spinner{width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--m);animation:spin 0.9s linear infinite;margin:0 auto 1.8rem}
     .analyzing-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:#fff;margin-bottom:0.6rem}
     .analyzing-sub{color:rgba(255,255,255,0.4);font-size:0.88rem;line-height:1.6;max-width:260px;margin:0 auto}
 
+    /* ══ RESULTADO ══ */
     #screen-result{background:#f7f7f5;align-items:center;padding:0 0 4rem}
     .result-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;text-align:center;position:relative}
     .result-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
     .result-header .logo-small{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:1rem}
-    .result-header .logo-small span{color:var(--m)}
+    .result-header .logo-small em{font-style:italic;color:var(--t)}
     .result-preview{width:100%;max-width:340px;height:180px;object-fit:cover;border-radius:14px;border:3px solid rgba(255,255,255,0.15);margin:0 auto;display:none}
     .result-card{background:#fff;border-radius:20px;padding:1.8rem 1.5rem;width:calc(100% - 2rem);max-width:440px;box-shadow:0 2px 20px rgba(0,0,0,0.07);margin-top:-1rem}
     .result-greeting{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#111;margin-bottom:0.5rem}
@@ -152,39 +225,73 @@
     .footer{color:#ccc;font-size:0.68rem;margin-top:1.5rem;text-align:center;padding:0 1rem}
 
     @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   </style>
 </head>
 <body>
 
-<!-- HOME -->
+<!-- ══ HOME ══ -->
 <div class="screen active" id="screen-home">
-  <div class="home-logo">
-    <span class="arty">Arty</span><span class="suite">Suite</span><span class="dot"></span>
+  <div class="home-logo-wrap">
+    <div class="home-logo-box">
+      <span style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--m);font-weight:700">AV</span>
+      <div class="dot"></div>
+    </div>
+    <div class="home-logo-text">Arty<em>Suite</em></div>
   </div>
-  <p class="home-tagline">by ArtyVinos</p>
+  <p class="home-by">by ArtyVinos</p>
+
   <div class="home-cards">
-    <div class="app-card app-card-copy" onclick="showCopy()">
-      <div class="app-card-num">01</div>
-      <div class="app-card-name">ArtyCopy</div>
-      <div class="app-card-desc">Usa la cámara para calcar tu dibujo sobre el lienzo. Tu guía invisible.</div>
-      <div class="app-card-arrow">→</div>
-    </div>
-    <div class="app-card app-card-flow" onclick="showScreen('upload')">
-      <div class="app-card-num">02</div>
-      <div class="app-card-name">ArtyFlow</div>
-      <div class="app-card-desc">Fotografía tu obra terminada y descubre lo que dice sobre ti.</div>
-      <div class="app-card-arrow">→</div>
-    </div>
+    <button class="pill-btn pill-copy" onclick="showCopy()">
+      <div class="pill-icon">📷</div>
+      <div class="pill-texts">
+        <div class="pill-title">ArtyCopy</div>
+        <div class="pill-sub">Calca con la cámara en vivo</div>
+      </div>
+      <div class="pill-arrow">→</div>
+    </button>
+
+    <button class="pill-btn pill-flow" onclick="showScreen('upload')">
+      <div class="pill-icon">🎨</div>
+      <div class="pill-texts">
+        <div class="pill-title">ArtyFlow</div>
+        <div class="pill-sub">Analiza tu obra y tu personalidad</div>
+      </div>
+      <div class="pill-arrow">→</div>
+    </button>
   </div>
+
+  <div class="more-label">más opciones</div>
+
+  <div class="home-cards">
+    <button class="pill-btn pill-dark" onclick="showQR()">
+      <div class="pill-icon">📲</div>
+      <div class="pill-texts">
+        <div class="pill-title">Compartir ArtySuite</div>
+        <div class="pill-sub">QR para instalar en más móviles</div>
+      </div>
+      <div class="pill-arrow" style="color:rgba(255,255,255,0.3)">→</div>
+    </button>
+  </div>
+
   <p class="home-footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
 </div>
 
-<!-- ARTYCOPY -->
+<!-- ══ QR MODAL ══ -->
+<div class="modal-overlay" id="qr-modal" onclick="closeQR(event)">
+  <div class="modal-card">
+    <div class="modal-title">Compartir ArtySuite</div>
+    <p class="modal-sub">Escanea este QR desde otro móvil para abrir e instalar la app</p>
+    <div id="qr-container"></div>
+    <div class="modal-url" id="qr-url"></div>
+    <button class="modal-close" onclick="document.getElementById('qr-modal').classList.remove('open')">Cerrar</button>
+  </div>
+</div>
+
+<!-- ══ ARTYCOPY ══ -->
 <div class="screen" id="screen-copy">
   <div class="copy-header">
     <button class="copy-back" onclick="exitCopy()">← Inicio</button>
-    <div class="copy-header-logo">Arty<span>Copy</span></div>
+    <div class="copy-header-logo">Arty<em>Copy</em></div>
     <div style="width:60px"></div>
   </div>
 
@@ -192,17 +299,14 @@
     <video id="copy-video" autoplay playsinline muted></video>
     <img id="copy-overlay" alt=""/>
 
-    <!-- Mini indicadores -->
     <div class="copy-indicators" id="copy-inds" style="display:none">
       <span class="copy-ind" id="ind-op">Op: 50%</span>
       <span class="copy-ind" id="ind-sc">Sc: 100%</span>
       <span class="copy-ind" id="ind-rot">Rot: 0°</span>
     </div>
 
-    <!-- Botón flotante -->
     <button class="copy-toggle-btn" id="copy-toggle" onclick="togglePanel()">⚙️</button>
 
-    <!-- Panel colapsable -->
     <div class="copy-panel" id="copy-panel">
       <div class="copy-panel-handle"></div>
       <div class="copy-ctrl-row">
@@ -221,40 +325,65 @@
         <span class="copy-ctrl-val" id="lbl-rot">0°</span>
       </div>
       <div class="copy-btn-row">
-        <button class="copy-btn copy-btn-img" onclick="document.getElementById('copy-file').click()">📂 Cargar imagen</button>
-        <button class="copy-btn copy-btn-flow" onclick="exitCopyToFlow()">🎨 Analizar →</button>
+        <button class="copy-btn copy-btn-cam" onclick="document.getElementById('copy-cam').click()">📷 Cámara</button>
+        <button class="copy-btn copy-btn-lib" onclick="document.getElementById('copy-lib').click()">🖼 Carrete</button>
+        <button class="copy-btn copy-btn-flow" onclick="exitCopyToFlow()">🎨 Analizar</button>
       </div>
       <button class="copy-close-panel" onclick="togglePanel()">✕ Cerrar controles</button>
     </div>
   </div>
-  <input type="file" id="copy-file" accept="image/*" style="display:none" onchange="loadCopyImage(event)"/>
+
+  <input type="file" id="copy-cam" accept="image/*" capture="environment" style="display:none" onchange="loadCopyImage(event)"/>
+  <input type="file" id="copy-lib" accept="image/*" style="display:none" onchange="loadCopyImage(event)"/>
 </div>
 
-<!-- ARTYFLOW: UPLOAD -->
+<!-- ══ ARTYFLOW: UPLOAD ══ -->
 <div class="screen" id="screen-upload">
-  <div class="upload-top">
-    <div class="logo-upload">
-      <span class="arty">Arty</span><span class="flow">Flow</span><span class="dot"></span>
+  <div class="upload-logo-wrap">
+    <div class="upload-logo-box">
+      <span style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--t);font-weight:700">AV</span>
+      <div class="dot"></div>
     </div>
-    <h1 class="upload-headline">Tu obra<br>te <em>habla</em><br>hoy</h1>
-    <p class="upload-sub">Fotografía tu cuadro y descubre lo que dice sobre ti a través del color, el trazo y tu energía numerológica.</p>
+    <div class="upload-logo-title">Arty<em>Flow</em></div>
   </div>
-  <div class="upload-bottom">
-    <button class="btn-camera" onclick="document.getElementById('file-camera').click()">
-      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      Fotografiar mi obra
+  <p class="upload-by">by ArtyVinos</p>
+
+  <h1 class="upload-headline">Tu obra te<br><em>habla</em> hoy</h1>
+  <p class="upload-sub">Fotografía tu cuadro y descubre lo que dice sobre ti a través del color, el trazo y tu energía numerológica.</p>
+
+  <div class="upload-btns">
+    <button class="pill-btn pill-copy" onclick="document.getElementById('file-camera').click()">
+      <div class="pill-icon">📷</div>
+      <div class="pill-texts">
+        <div class="pill-title">Fotografiar mi obra</div>
+        <div class="pill-sub">Abre la cámara trasera</div>
+      </div>
     </button>
-    <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none"/>
-    <p class="upload-note">Apunta con la cámara trasera a tu cuadro<br>y pulsa el botón para fotografiarlo</p>
-    <button class="btn-outline" onclick="showScreen('home')" style="margin-top:0">← Volver al inicio</button>
-    <p class="error-msg" id="upload-error"></p>
+    <button class="pill-btn" style="background:linear-gradient(135deg,#555,#333);box-shadow:0 4px 14px rgba(0,0,0,0.2)" onclick="document.getElementById('file-library').click()">
+      <div class="pill-icon">🖼</div>
+      <div class="pill-texts">
+        <div class="pill-title">Elegir del carrete</div>
+        <div class="pill-sub">Abre una foto guardada</div>
+      </div>
+    </button>
+    <button class="pill-btn" style="background:#fff;border:1.5px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,0.05)" onclick="showScreen('home')">
+      <div class="pill-icon" style="font-size:1.2rem">←</div>
+      <div class="pill-texts">
+        <div class="pill-title" style="color:var(--dark)">Volver al inicio</div>
+        <div class="pill-sub">Ir a ArtySuite</div>
+      </div>
+    </button>
   </div>
+
+  <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none"/>
+  <input type="file" id="file-library" accept="image/*" style="display:none"/>
+  <p class="error-msg" id="upload-error"></p>
 </div>
 
-<!-- ARTYFLOW: FORM -->
+<!-- ══ FORM ══ -->
 <div class="screen" id="screen-form">
   <div class="form-header">
-    <div class="logo-small">Arty<span>Flow</span></div>
+    <div class="logo-small">Arty<em>Flow</em></div>
     <img class="preview-img" id="preview-img" alt="Tu obra"/>
   </div>
   <div class="form-card">
@@ -283,17 +412,17 @@
   <p class="footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
 </div>
 
-<!-- ANALIZANDO -->
+<!-- ══ ANALIZANDO ══ -->
 <div class="screen" id="screen-analyzing">
   <div class="spinner"></div>
   <p class="analyzing-title">Leyendo tu obra...</p>
   <p class="analyzing-sub" id="analyzing-sub">Analizando colores, trazos y energía</p>
 </div>
 
-<!-- RESULTADO -->
+<!-- ══ RESULTADO ══ -->
 <div class="screen" id="screen-result">
   <div class="result-header">
-    <div class="logo-small">Arty<span>Flow</span></div>
+    <div class="logo-small">Arty<em>Flow</em></div>
     <img class="result-preview" id="result-img" alt="Tu obra"/>
   </div>
   <div class="result-card">
@@ -308,10 +437,8 @@
 </div>
 
 <script>
-// ── Estado global ─────────────────────────────────────────────────
-let imageDataUrl = null;
-let consentChecked = false;
-let contactType = 'email';
+// ── Estado ────────────────────────────────────────────────────────
+let imageDataUrl = null, consentChecked = false, contactType = 'email';
 document.getElementById('birth-date').max = new Date().toISOString().split('T')[0];
 
 const LP = {
@@ -327,51 +454,49 @@ const LP = {
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo(0,0);
 }
 
-// ══════════════════════════════════════════════════════════════════
-// ARTYCOPY
-// ══════════════════════════════════════════════════════════════════
-let copyStream = null;
-let panelOpen = false;
-
-// Estado de la imagen superpuesta
-let ovX = 0, ovY = 0, ovScale = 1, ovRot = 0, ovOp = 0.5;
-// Drag
-let dragging = false, dragStartX = 0, dragStartY = 0, dragOvX = 0, dragOvY = 0;
-// Pinch
-let pinching = false, pinchStartDist = 0, pinchStartScale = 1;
-
-function showCopy() {
-  showScreen('copy');
-  startCamera();
+// ── QR ────────────────────────────────────────────────────────────
+let qrGenerated = false;
+function showQR() {
+  const url = window.location.origin;
+  document.getElementById('qr-url').textContent = url;
+  if (!qrGenerated) {
+    new QRCode(document.getElementById('qr-container'), {
+      text: url, width: 200, height: 200,
+      colorDark: '#111', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    qrGenerated = true;
+  }
+  document.getElementById('qr-modal').classList.add('open');
+}
+function closeQR(e) {
+  if (e.target === document.getElementById('qr-modal'))
+    document.getElementById('qr-modal').classList.remove('open');
 }
 
-function exitCopy() {
-  stopCamera();
-  showScreen('home');
-}
+// ══ ARTYCOPY ══════════════════════════════════════════════════════
+let copyStream = null, panelOpen = false;
+let ovX=0, ovY=0, ovScale=1, ovRot=0, ovOp=0.5;
+let dragging=false, dragStartX=0, dragStartY=0, dragOvX=0, dragOvY=0;
+let pinching=false, pinchStartDist=0, pinchStartScale=1;
 
-function exitCopyToFlow() {
-  stopCamera();
-  showScreen('upload');
-}
+function showCopy() { showScreen('copy'); startCamera(); }
+function exitCopy() { stopCamera(); showScreen('home'); }
+function exitCopyToFlow() { stopCamera(); showScreen('upload'); }
 
 async function startCamera() {
   try {
-    copyStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    copyStream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:'environment'}, audio:false });
     document.getElementById('copy-video').srcObject = copyStream;
-  } catch(e) {
-    alert('No se pudo acceder a la cámara: ' + e.message);
-  }
+  } catch(e) { alert('No se pudo acceder a la cámara: ' + e.message); }
 }
-
 function stopCamera() {
-  if (copyStream) { copyStream.getTracks().forEach(t => t.stop()); copyStream = null; }
+  if (copyStream) { copyStream.getTracks().forEach(t=>t.stop()); copyStream=null; }
 }
 
-// Panel toggle
 function togglePanel() {
   panelOpen = !panelOpen;
   document.getElementById('copy-panel').classList.toggle('open', panelOpen);
@@ -388,186 +513,170 @@ function loadCopyImage(e) {
     const img = document.getElementById('copy-overlay');
     img.src = ev.target.result;
     img.style.display = 'block';
-    ovX = 0; ovY = 0; ovScale = 1; ovRot = 0; ovOp = 0.5;
-    document.getElementById('sl-op').value  = 50;
-    document.getElementById('sl-sc').value  = 100;
-    document.getElementById('sl-rot').value = 0;
+    ovX=0; ovY=0; ovScale=1; ovRot=0; ovOp=0.5;
+    document.getElementById('sl-op').value=50;
+    document.getElementById('sl-sc').value=100;
+    document.getElementById('sl-rot').value=0;
     applyOverlay();
+    if (panelOpen) togglePanel();
   };
   reader.readAsDataURL(file);
 }
 
 function updateOverlay() {
-  ovOp  = document.getElementById('sl-op').value / 100;
+  ovOp    = document.getElementById('sl-op').value / 100;
   ovScale = document.getElementById('sl-sc').value / 100;
-  ovRot = parseInt(document.getElementById('sl-rot').value);
+  ovRot   = parseInt(document.getElementById('sl-rot').value);
   applyOverlay();
 }
 
 function applyOverlay() {
   const img = document.getElementById('copy-overlay');
-  const op  = Math.round(ovOp * 100);
-  const sc  = Math.round(ovScale * 100);
-  document.getElementById('lbl-op').textContent  = op + '%';
-  document.getElementById('lbl-sc').textContent  = sc + '%';
-  document.getElementById('lbl-rot').textContent = ovRot + '°';
-  document.getElementById('ind-op').textContent  = 'Op: ' + op + '%';
-  document.getElementById('ind-sc').textContent  = 'Sc: ' + sc + '%';
-  document.getElementById('ind-rot').textContent = 'Rot: ' + ovRot + '°';
+  const op  = Math.round(ovOp*100), sc = Math.round(ovScale*100);
+  document.getElementById('lbl-op').textContent = op+'%';
+  document.getElementById('lbl-sc').textContent = sc+'%';
+  document.getElementById('lbl-rot').textContent = ovRot+'°';
+  document.getElementById('ind-op').textContent = 'Op: '+op+'%';
+  document.getElementById('ind-sc').textContent = 'Sc: '+sc+'%';
+  document.getElementById('ind-rot').textContent = 'Rot: '+ovRot+'°';
   img.style.opacity = ovOp;
-  img.style.transform = 'translate(calc(-50% + ' + ovX + 'px), calc(-50% + ' + ovY + 'px)) scale(' + ovScale + ') rotate(' + ovRot + 'deg)';
+  img.style.transform = 'translate(calc(-50% + '+ovX+'px), calc(-50% + '+ovY+'px)) scale('+ovScale+') rotate('+ovRot+'deg)';
 }
 
-// ── Touch: drag + pinch ───────────────────────────────────────────
-const canvas = document.getElementById('copy-canvas');
+function getDist(t) { return Math.hypot(t[1].clientX-t[0].clientX, t[1].clientY-t[0].clientY); }
 
-function getTouchDist(t) {
-  return Math.hypot(t[1].clientX - t[0].clientX, t[1].clientY - t[0].clientY);
+const cvs = document.getElementById('copy-canvas');
+cvs.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.copy-panel,.copy-toggle-btn,.copy-header')) return;
+  if (e.touches.length===1) {
+    dragging=true; pinching=false;
+    dragStartX=e.touches[0].clientX; dragStartY=e.touches[0].clientY;
+    dragOvX=ovX; dragOvY=ovY;
+  } else if (e.touches.length===2) {
+    pinching=true; dragging=false;
+    pinchStartDist=getDist(e.touches); pinchStartScale=ovScale;
+  }
+},{passive:true});
+
+cvs.addEventListener('touchmove', (e) => {
+  if (e.target.closest('.copy-panel,.copy-toggle-btn')) return;
+  if (e.touches.length===1 && dragging && !pinching) {
+    ovX=dragOvX+(e.touches[0].clientX-dragStartX);
+    ovY=dragOvY+(e.touches[0].clientY-dragStartY);
+    applyOverlay();
+  } else if (e.touches.length===2 && pinching) {
+    const d=getDist(e.touches);
+    ovScale=Math.max(0.1,Math.min(5,pinchStartScale*(d/pinchStartDist)));
+    document.getElementById('sl-sc').value=Math.round(ovScale*100);
+    applyOverlay();
+  }
+},{passive:true});
+
+cvs.addEventListener('touchend', (e) => {
+  if (e.touches.length<2) pinching=false;
+  if (e.touches.length===0) dragging=false;
+},{passive:true});
+
+// ══ ARTYFLOW ══════════════════════════════════════════════════════
+function setupFileInput(id) {
+  document.getElementById(id).addEventListener('change', e => handleFile(e.target.files[0]));
 }
-
-canvas.addEventListener('touchstart', (e) => {
-  if (e.target.closest('.copy-panel') || e.target.closest('.copy-toggle-btn') || e.target.closest('.copy-header')) return;
-  if (e.touches.length === 1) {
-    dragging = true;
-    dragStartX = e.touches[0].clientX;
-    dragStartY = e.touches[0].clientY;
-    dragOvX = ovX; dragOvY = ovY;
-  } else if (e.touches.length === 2) {
-    pinching = true; dragging = false;
-    pinchStartDist = getTouchDist(e.touches);
-    pinchStartScale = ovScale;
-  }
-}, { passive: true });
-
-canvas.addEventListener('touchmove', (e) => {
-  if (e.target.closest('.copy-panel') || e.target.closest('.copy-toggle-btn')) return;
-  if (e.touches.length === 1 && dragging && !pinching) {
-    ovX = dragOvX + (e.touches[0].clientX - dragStartX);
-    ovY = dragOvY + (e.touches[0].clientY - dragStartY);
-    applyOverlay();
-  } else if (e.touches.length === 2 && pinching) {
-    const dist = getTouchDist(e.touches);
-    ovScale = Math.max(0.1, Math.min(5, pinchStartScale * (dist / pinchStartDist)));
-    document.getElementById('sl-sc').value = Math.round(ovScale * 100);
-    applyOverlay();
-  }
-}, { passive: true });
-
-canvas.addEventListener('touchend', () => {
-  dragging = false;
-  if (event && event.touches && event.touches.length < 2) pinching = false;
-}, { passive: true });
-
-// ══════════════════════════════════════════════════════════════════
-// ARTYFLOW
-// ══════════════════════════════════════════════════════════════════
-document.getElementById('file-camera').addEventListener('change', e => handleFile(e.target.files[0]));
+setupFileInput('file-camera');
+setupFileInput('file-library');
 
 function handleFile(file) {
-  if (!file || !file.type.startsWith('image/')) {
-    document.getElementById('upload-error').textContent = 'El archivo debe ser una imagen';
-    return;
+  if (!file||!file.type.startsWith('image/')) {
+    document.getElementById('upload-error').textContent='El archivo debe ser una imagen'; return;
   }
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    imageDataUrl = e.target.result;
-    document.getElementById('preview-img').src = imageDataUrl;
-    document.getElementById('preview-img').style.display = 'block';
-    document.getElementById('result-img').src = imageDataUrl;
-    document.getElementById('result-img').style.display = 'block';
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    imageDataUrl=e.target.result;
+    document.getElementById('preview-img').src=imageDataUrl;
+    document.getElementById('preview-img').style.display='block';
+    document.getElementById('result-img').src=imageDataUrl;
+    document.getElementById('result-img').style.display='block';
     showScreen('form');
   };
   reader.readAsDataURL(file);
 }
 
 function toggleConsent() {
-  consentChecked = !consentChecked;
-  document.getElementById('consent-check').checked = consentChecked;
-  document.getElementById('consent-box').classList.toggle('checked', consentChecked);
-  document.getElementById('contact-section').style.display = consentChecked ? 'block' : 'none';
+  consentChecked=!consentChecked;
+  document.getElementById('consent-check').checked=consentChecked;
+  document.getElementById('consent-box').classList.toggle('checked',consentChecked);
+  document.getElementById('contact-section').style.display=consentChecked?'block':'none';
 }
 
 function setContact(type) {
-  contactType = type;
-  document.getElementById('btn-email').classList.toggle('active', type === 'email');
-  document.getElementById('btn-whatsapp').classList.toggle('active', type === 'whatsapp');
-  const inp = document.getElementById('contact-input');
-  inp.type = type === 'email' ? 'email' : 'tel';
-  inp.placeholder = type === 'email' ? 'tu@email.com' : '+34 600 000 000';
+  contactType=type;
+  document.getElementById('btn-email').classList.toggle('active',type==='email');
+  document.getElementById('btn-whatsapp').classList.toggle('active',type==='whatsapp');
+  const inp=document.getElementById('contact-input');
+  inp.type=type==='email'?'email':'tel';
+  inp.placeholder=type==='email'?'tu@email.com':'+34 600 000 000';
 }
 
-function calcLifePath(dateStr) {
-  const digits = dateStr.replace(/-/g,'').split('').map(Number);
-  let sum = digits.reduce((a,b) => a+b, 0);
-  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33)
-    sum = String(sum).split('').map(Number).reduce((a,b) => a+b, 0);
-  return sum;
+function calcLifePath(d) {
+  const digits=d.replace(/-/g,'').split('').map(Number);
+  let s=digits.reduce((a,b)=>a+b,0);
+  while(s>9&&s!==11&&s!==22&&s!==33) s=String(s).split('').map(Number).reduce((a,b)=>a+b,0);
+  return s;
 }
 
 function compressImage() {
-  return new Promise((res) => {
-    const img = new Image();
-    img.onload = () => {
-      const MAX = 900;
-      let w = img.width, h = img.height;
-      if (w > h) { if (w > MAX) { h = Math.round(h*MAX/w); w = MAX; } }
-      else { if (h > MAX) { w = Math.round(w*MAX/h); h = MAX; } }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      res(canvas.toDataURL('image/jpeg', 0.82).split(',')[1]);
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=900; let w=img.width,h=img.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
+      else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/jpeg',0.82).split(',')[1]);
     };
-    img.src = imageDataUrl;
+    img.src=imageDataUrl;
   });
 }
 
 async function startAnalysis() {
-  document.getElementById('form-error').textContent = '';
-  const name      = document.getElementById('user-name').value.trim();
-  const birthDate = document.getElementById('birth-date').value;
-  const contacto  = document.getElementById('contact-input').value.trim();
-  let lifePath = null, lpDesc = '';
-  if (birthDate) { lifePath = calcLifePath(birthDate); lpDesc = LP[lifePath] || ''; }
-  document.getElementById('result-greeting').textContent = name ? 'Tu lectura de hoy, ' + name : 'Tu lectura de hoy';
-  document.getElementById('analyzing-sub').textContent = birthDate
-    ? 'Cruzando energía numerológica con expresión pictórica'
-    : 'Analizando colores, trazos y energía';
+  document.getElementById('form-error').textContent='';
+  const name=document.getElementById('user-name').value.trim();
+  const birthDate=document.getElementById('birth-date').value;
+  const contacto=document.getElementById('contact-input').value.trim();
+  let lifePath=null,lpDesc='';
+  if(birthDate){lifePath=calcLifePath(birthDate);lpDesc=LP[lifePath]||'';}
+  document.getElementById('result-greeting').textContent=name?'Tu lectura de hoy, '+name:'Tu lectura de hoy';
+  document.getElementById('analyzing-sub').textContent=birthDate?'Cruzando energía numerológica con expresión pictórica':'Analizando colores, trazos y energía';
   showScreen('analyzing');
   try {
-    const imageBase64 = await compressImage();
-    const response = await fetch('/api/analyze', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64, mimeType: 'image/jpeg', lifePath, lpDesc, userName: name, contacto, tipoContacto: contactType, fechaNacimiento: birthDate, consentimiento: consentChecked }),
+    const imageBase64=await compressImage();
+    const r=await fetch('/api/analyze',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({imageBase64,mimeType:'image/jpeg',lifePath,lpDesc,userName:name,contacto,tipoContacto:contactType,fechaNacimiento:birthDate,consentimiento:consentChecked})
     });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Error del servidor');
-    renderResult(data.result, lifePath);
-  } catch (err) {
-    document.getElementById('form-error').textContent = 'Error: ' + err.message;
+    const data=await r.json();
+    if(!r.ok) throw new Error(data.error||'Error del servidor');
+    renderResult(data.result,lifePath);
+  } catch(err) {
+    document.getElementById('form-error').textContent='Error: '+err.message;
     showScreen('form');
   }
 }
 
-function renderResult(text, lifePath) {
-  if (lifePath && LP[lifePath]) {
-    document.getElementById('lp-badge-wrap').innerHTML =
-      '<div class="lp-badge">Camino de Vida ' + lifePath + ' · ' + LP[lifePath] + '</div>';
-  } else {
-    document.getElementById('lp-badge-wrap').innerHTML = '';
+function renderResult(text,lifePath) {
+  document.getElementById('lp-badge-wrap').innerHTML=lifePath&&LP[lifePath]
+    ?'<div class="lp-badge">Camino de Vida '+lifePath+' · '+LP[lifePath]+'</div>':'';
+  const TITLES=['LO QUE TU OBRA REVELA','TU ESENCIA NUMEROLOGICA','EL MENSAJE DE TU CUADRO'];
+  const lines=text.split('\n').map(l=>l.replace(/\*\*/g,'').trim()).filter(Boolean);
+  let html='',inSection=false;
+  for(const line of lines){
+    const isT=TITLES.some(t=>line.toUpperCase().includes(t));
+    if(isT){html+='<p class="section-title">'+line+'</p>';inSection=true;}
+    else if(inSection){html+='<p class="section-body">'+line+'</p>';}
   }
-  const TITLES = ['LO QUE TU OBRA REVELA','TU ESENCIA NUMEROLOGICA','EL MENSAJE DE TU CUADRO'];
-  const lines = text.split('\n').map(l => l.replace(/\*\*/g,'').trim()).filter(Boolean);
-  let html = '', inSection = false;
-  for (const line of lines) {
-    const isTitle = TITLES.some(t => line.toUpperCase().includes(t));
-    if (isTitle) { html += '<p class="section-title">' + line + '</p>'; inSection = true; }
-    else if (inSection) { html += '<p class="section-body">' + line + '</p>'; }
-  }
-  if (!html) html = '<p class="section-body">' + text + '</p>';
-  document.getElementById('result-text').innerHTML = html;
-  const contacto = document.getElementById('contact-input').value.trim();
-  document.getElementById('saved-msg').style.display = (consentChecked && contacto) ? 'block' : 'none';
+  if(!html) html='<p class="section-body">'+text+'</p>';
+  document.getElementById('result-text').innerHTML=html;
+  document.getElementById('saved-msg').style.display=(consentChecked&&document.getElementById('contact-input').value.trim())?'block':'none';
   showScreen('result');
 }
 </script>
