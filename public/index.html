@@ -647,6 +647,8 @@ async function startAnalysis() {
   document.getElementById('form-error').textContent='';
   const name=document.getElementById('user-name').value.trim();
   const birthDate=document.getElementById('birth-date').value;
+  if(!name){document.getElementById('form-error').textContent='Por favor escribe tu nombre';return;}
+  if(!birthDate){document.getElementById('form-error').textContent='La fecha de nacimiento es necesaria';return;}
   const contacto=document.getElementById('contact-input').value.trim();
   let lifePath=null,lpDesc='';
   if(birthDate){lifePath=calcLifePath(birthDate);lpDesc=LP[lifePath]||'';}
