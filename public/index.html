@@ -9,11 +9,10 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;overflow:hidden;background:#f7f7f5;font-family:'DM Sans',sans-serif}
     :root{--m:#D4006B;--t:#00B4B4;--dark:#111}
-
     .screen{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
     .screen.active{display:flex;flex-direction:column}
 
-    /* ── HOME ── */
+    /* HOME */
     #screen-home{background:var(--dark);align-items:center;justify-content:center;padding:2rem 1.5rem}
     .home-logo{text-align:center;margin-bottom:0.5rem}
     .home-logo .arty{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:#fff}
@@ -21,7 +20,7 @@
     .home-logo .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--t);margin-left:4px;vertical-align:super}
     .home-tagline{font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-align:center;margin-bottom:3rem}
     .home-cards{width:100%;max-width:400px;display:flex;flex-direction:column;gap:1rem}
-    .app-card{border-radius:18px;padding:1.6rem 1.4rem;cursor:pointer;transition:transform 0.15s;active:scale(0.98)}
+    .app-card{border-radius:18px;padding:1.6rem 1.4rem;cursor:pointer;transition:transform 0.15s}
     .app-card:active{transform:scale(0.97)}
     .app-card-copy{background:linear-gradient(135deg,#00B4B4,#007f7f)}
     .app-card-flow{background:linear-gradient(135deg,#D4006B,#8f0048)}
@@ -31,32 +30,72 @@
     .app-card-arrow{font-size:1.4rem;margin-top:1rem;color:rgba(255,255,255,0.5)}
     .home-footer{color:rgba(255,255,255,0.2);font-size:0.68rem;margin-top:2.5rem;text-align:center}
 
-    /* ── ARTYCOPY ── */
-    #screen-copy{background:#000;align-items:stretch}
-    .copy-header{background:#111;padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    /* ARTYCOPY */
+    #screen-copy{background:#000;align-items:stretch;overflow:hidden}
+    .copy-header{background:#111;padding:0.8rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:10}
     .copy-header-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff}
     .copy-header-logo span{color:var(--t)}
     .copy-back{background:none;border:none;color:rgba(255,255,255,0.5);font-size:0.85rem;cursor:pointer;font-family:'DM Sans',sans-serif}
-    .copy-canvas-wrap{flex:1;position:relative;overflow:hidden;min-height:60vh}
+
+    /* Canvas: ocupa todo el espacio disponible */
+    .copy-canvas-wrap{flex:1;position:relative;overflow:hidden;touch-action:none}
     #copy-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-    #copy-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
-    .copy-controls{background:#111;padding:1.2rem;flex-shrink:0}
-    .copy-ctrl-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem}
+    #copy-overlay{
+      position:absolute;
+      top:50%;left:50%;
+      transform-origin:center center;
+      transform:translate(-50%,-50%) scale(1) rotate(0deg);
+      pointer-events:none;
+      display:none;
+      max-width:none;
+      width:80%;
+    }
+
+    /* Botón flotante ⚙️ */
+    .copy-toggle-btn{
+      position:absolute;bottom:1.2rem;right:1.2rem;
+      width:48px;height:48px;border-radius:50%;
+      background:rgba(0,180,180,0.9);border:none;
+      color:#fff;font-size:1.3rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 4px 14px rgba(0,0,0,0.4);z-index:20;
+      transition:transform 0.2s;
+    }
+    .copy-toggle-btn:active{transform:scale(0.92)}
+
+    /* Panel colapsable */
+    .copy-panel{
+      position:absolute;bottom:0;left:0;right:0;
+      background:#111;border-radius:20px 20px 0 0;
+      padding:1.2rem 1.2rem 2rem;
+      transform:translateY(100%);
+      transition:transform 0.3s ease;
+      z-index:30;
+    }
+    .copy-panel.open{transform:translateY(0)}
+    .copy-panel-handle{width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 1.2rem}
+    .copy-ctrl-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.9rem}
     .copy-ctrl-label{font-size:0.72rem;color:rgba(255,255,255,0.4);width:70px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.08em}
-    .copy-slider{flex:1;accent-color:var(--t);height:3px}
-    .copy-ctrl-val{font-size:0.75rem;color:rgba(255,255,255,0.5);width:35px;text-align:right}
-    .copy-btn-row{display:flex;gap:0.7rem;margin-top:0.5rem}
-    .copy-btn{flex:1;padding:0.8rem;border-radius:12px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700}
+    .copy-slider{flex:1;accent-color:var(--t);height:4px;cursor:pointer}
+    .copy-ctrl-val{font-size:0.75rem;color:rgba(255,255,255,0.5);width:38px;text-align:right}
+    .copy-btn-row{display:flex;gap:0.7rem;margin-top:0.8rem}
+    .copy-btn{flex:1;padding:0.85rem;border-radius:12px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700}
     .copy-btn-img{background:var(--t);color:#fff}
     .copy-btn-flow{background:var(--m);color:#fff}
-    .copy-hint{font-size:0.73rem;color:rgba(255,255,255,0.3);text-align:center;margin-top:0.7rem}
+    .copy-close-panel{width:100%;padding:0.7rem;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.4);margin-top:0.6rem}
 
-    /* ── ARTYFLOW: UPLOAD ── */
+    /* Mini indicadores visibles cuando panel cerrado */
+    .copy-indicators{
+      position:absolute;bottom:1.2rem;left:1.2rem;
+      display:flex;flex-direction:column;gap:0.3rem;z-index:20;
+    }
+    .copy-ind{background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.6);font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:6px;backdrop-filter:blur(4px)}
+
+    /* ARTYFLOW */
     #screen-upload{background:#fff;align-items:stretch}
     .upload-top{background:var(--dark);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem 2.5rem;position:relative;min-height:58vh}
     .upload-top::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:#fff;border-radius:32px 32px 0 0}
-    .logo-upload{position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);white-space:nowrap;display:flex;align-items:center;gap:0}
-    .logo-upload .back-btn{background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;position:absolute;left:-4rem;top:50%;transform:translateY(-50%)}
+    .logo-upload{position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);white-space:nowrap}
     .logo-upload .arty{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:#fff}
     .logo-upload .flow{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--m)}
     .logo-upload .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--t);margin-left:3px;vertical-align:super}
@@ -69,7 +108,6 @@
     .upload-note{font-size:0.92rem;font-weight:700;color:#555;text-align:center;line-height:1.55}
     .error-msg{color:var(--m);font-size:0.82rem;text-align:center;min-height:1.2rem}
 
-    /* ── ARTYFLOW: FORM ── */
     #screen-form{background:#f7f7f5;align-items:center;padding:0 0 4rem}
     .form-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;position:relative;text-align:center}
     .form-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
@@ -94,13 +132,11 @@
     .btn-primary{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;background:var(--m);color:#fff;letter-spacing:0.04em;box-shadow:0 4px 16px rgba(212,0,107,0.25);margin-top:1.6rem}
     .btn-outline{width:100%;padding:0.85rem;border-radius:14px;border:1.5px solid #e8e8e8;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;background:#fff;color:#999;margin-top:0.7rem}
 
-    /* ── ANALIZANDO ── */
     #screen-analyzing{background:var(--dark);align-items:center;justify-content:center;text-align:center;padding:2rem}
     .spinner{width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--m);animation:spin 0.9s linear infinite;margin:0 auto 1.8rem}
     .analyzing-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:#fff;margin-bottom:0.6rem}
     .analyzing-sub{color:rgba(255,255,255,0.4);font-size:0.88rem;line-height:1.6;max-width:260px;margin:0 auto}
 
-    /* ── RESULTADO ── */
     #screen-result{background:#f7f7f5;align-items:center;padding:0 0 4rem}
     .result-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;text-align:center;position:relative}
     .result-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
@@ -121,13 +157,12 @@
 </head>
 <body>
 
-<!-- ══ HOME ══ -->
+<!-- HOME -->
 <div class="screen active" id="screen-home">
   <div class="home-logo">
     <span class="arty">Arty</span><span class="suite">Suite</span><span class="dot"></span>
   </div>
   <p class="home-tagline">by ArtyVinos</p>
-
   <div class="home-cards">
     <div class="app-card app-card-copy" onclick="showCopy()">
       <div class="app-card-num">01</div>
@@ -142,53 +177,60 @@
       <div class="app-card-arrow">→</div>
     </div>
   </div>
-
   <p class="home-footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
 </div>
 
-<!-- ══ ARTYCOPY ══ -->
+<!-- ARTYCOPY -->
 <div class="screen" id="screen-copy">
   <div class="copy-header">
-    <button class="copy-back" onclick="showScreen('home')">← Inicio</button>
+    <button class="copy-back" onclick="exitCopy()">← Inicio</button>
     <div class="copy-header-logo">Arty<span>Copy</span></div>
     <div style="width:60px"></div>
   </div>
 
-  <div class="copy-canvas-wrap">
+  <div class="copy-canvas-wrap" id="copy-canvas">
     <video id="copy-video" autoplay playsinline muted></video>
-    <img id="copy-overlay" alt="" style="opacity:0.5;display:none"/>
-  </div>
+    <img id="copy-overlay" alt=""/>
 
-  <div class="copy-controls">
-    <div class="copy-ctrl-row">
-      <span class="copy-ctrl-label">Opacidad</span>
-      <input type="range" class="copy-slider" id="sl-op" min="0" max="100" value="50" oninput="updateOverlay()"/>
-      <span class="copy-ctrl-val" id="lbl-op">50%</span>
+    <!-- Mini indicadores -->
+    <div class="copy-indicators" id="copy-inds" style="display:none">
+      <span class="copy-ind" id="ind-op">Op: 50%</span>
+      <span class="copy-ind" id="ind-sc">Sc: 100%</span>
+      <span class="copy-ind" id="ind-rot">Rot: 0°</span>
     </div>
-    <div class="copy-ctrl-row">
-      <span class="copy-ctrl-label">Tamaño</span>
-      <input type="range" class="copy-slider" id="sl-sc" min="20" max="200" value="100" oninput="updateOverlay()"/>
-      <span class="copy-ctrl-val" id="lbl-sc">100%</span>
+
+    <!-- Botón flotante -->
+    <button class="copy-toggle-btn" id="copy-toggle" onclick="togglePanel()">⚙️</button>
+
+    <!-- Panel colapsable -->
+    <div class="copy-panel" id="copy-panel">
+      <div class="copy-panel-handle"></div>
+      <div class="copy-ctrl-row">
+        <span class="copy-ctrl-label">Opacidad</span>
+        <input type="range" class="copy-slider" id="sl-op" min="0" max="100" value="50" oninput="updateOverlay()"/>
+        <span class="copy-ctrl-val" id="lbl-op">50%</span>
+      </div>
+      <div class="copy-ctrl-row">
+        <span class="copy-ctrl-label">Tamaño</span>
+        <input type="range" class="copy-slider" id="sl-sc" min="20" max="300" value="100" oninput="updateOverlay()"/>
+        <span class="copy-ctrl-val" id="lbl-sc">100%</span>
+      </div>
+      <div class="copy-ctrl-row">
+        <span class="copy-ctrl-label">Rotación</span>
+        <input type="range" class="copy-slider" id="sl-rot" min="-180" max="180" value="0" oninput="updateOverlay()"/>
+        <span class="copy-ctrl-val" id="lbl-rot">0°</span>
+      </div>
+      <div class="copy-btn-row">
+        <button class="copy-btn copy-btn-img" onclick="document.getElementById('copy-file').click()">📂 Cargar imagen</button>
+        <button class="copy-btn copy-btn-flow" onclick="exitCopyToFlow()">🎨 Analizar →</button>
+      </div>
+      <button class="copy-close-panel" onclick="togglePanel()">✕ Cerrar controles</button>
     </div>
-    <div class="copy-ctrl-row">
-      <span class="copy-ctrl-label">Rotación</span>
-      <input type="range" class="copy-slider" id="sl-rot" min="-180" max="180" value="0" oninput="updateOverlay()"/>
-      <span class="copy-ctrl-val" id="lbl-rot">0°</span>
-    </div>
-    <div class="copy-btn-row">
-      <button class="copy-btn copy-btn-img" onclick="document.getElementById('copy-file').click()">
-        📂 Cargar imagen
-      </button>
-      <button class="copy-btn copy-btn-flow" onclick="showScreen('upload')">
-        🎨 Analizar obra →
-      </button>
-    </div>
-    <p class="copy-hint">Carga el dibujo que quieres calcar y ajusta opacidad y tamaño</p>
   </div>
   <input type="file" id="copy-file" accept="image/*" style="display:none" onchange="loadCopyImage(event)"/>
 </div>
 
-<!-- ══ ARTYFLOW: UPLOAD ══ -->
+<!-- ARTYFLOW: UPLOAD -->
 <div class="screen" id="screen-upload">
   <div class="upload-top">
     <div class="logo-upload">
@@ -209,7 +251,7 @@
   </div>
 </div>
 
-<!-- ══ ARTYFLOW: FORM ══ -->
+<!-- ARTYFLOW: FORM -->
 <div class="screen" id="screen-form">
   <div class="form-header">
     <div class="logo-small">Arty<span>Flow</span></div>
@@ -218,18 +260,14 @@
   <div class="form-card">
     <label class="field-label">Tu nombre</label>
     <input type="text" id="user-name" placeholder="¿Cómo te llamas?" autocomplete="given-name"/>
-
     <label class="field-label">Fecha de nacimiento</label>
     <input type="date" id="birth-date" max=""/>
     <p class="field-note">Solo para tu lectura numerológica. No la almacenamos.</p>
-
     <hr class="divider"/>
-
     <div class="consent-box" id="consent-box" onclick="toggleConsent()">
       <input type="checkbox" id="consent-check" onclick="event.stopPropagation();toggleConsent()"/>
       <span class="consent-text">Quiero seguir conociendo lo que ArtyVinos puede ofrecerme en el futuro</span>
     </div>
-
     <div class="contact-section" id="contact-section" style="display:none">
       <label class="field-label">¿Cómo prefieres que te contactemos?</label>
       <div class="contact-toggle">
@@ -238,7 +276,6 @@
       </div>
       <input type="email" id="contact-input" placeholder="tu@email.com"/>
     </div>
-
     <p class="error-msg" id="form-error"></p>
     <button class="btn-primary" onclick="startAnalysis()">Revelar mi lectura ✨</button>
     <button class="btn-outline" onclick="showScreen('upload')">Volver a fotografiar</button>
@@ -246,14 +283,14 @@
   <p class="footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
 </div>
 
-<!-- ══ ANALIZANDO ══ -->
+<!-- ANALIZANDO -->
 <div class="screen" id="screen-analyzing">
   <div class="spinner"></div>
   <p class="analyzing-title">Leyendo tu obra...</p>
   <p class="analyzing-sub" id="analyzing-sub">Analizando colores, trazos y energía</p>
 </div>
 
-<!-- ══ RESULTADO ══ -->
+<!-- RESULTADO -->
 <div class="screen" id="screen-result">
   <div class="result-header">
     <div class="logo-small">Arty<span>Flow</span></div>
@@ -263,9 +300,7 @@
     <p class="result-greeting" id="result-greeting">Tu lectura de hoy</p>
     <div id="lp-badge-wrap"></div>
     <div id="result-text"></div>
-    <div class="saved-msg" id="saved-msg" style="display:none">
-      ✅ Te avisaremos con las próximas novedades de ArtyVinos
-    </div>
+    <div class="saved-msg" id="saved-msg" style="display:none">✅ Te avisaremos con las próximas novedades de ArtyVinos</div>
     <hr class="divider"/>
     <button class="btn-primary" onclick="showScreen('home')">Volver al inicio 🏠</button>
   </div>
@@ -277,7 +312,6 @@
 let imageDataUrl = null;
 let consentChecked = false;
 let contactType = 'email';
-
 document.getElementById('birth-date').max = new Date().toISOString().split('T')[0];
 
 const LP = {
@@ -296,12 +330,32 @@ function showScreen(name) {
   window.scrollTo(0, 0);
 }
 
-// ── ArtyCopy ──────────────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+// ARTYCOPY
+// ══════════════════════════════════════════════════════════════════
 let copyStream = null;
+let panelOpen = false;
+
+// Estado de la imagen superpuesta
+let ovX = 0, ovY = 0, ovScale = 1, ovRot = 0, ovOp = 0.5;
+// Drag
+let dragging = false, dragStartX = 0, dragStartY = 0, dragOvX = 0, dragOvY = 0;
+// Pinch
+let pinching = false, pinchStartDist = 0, pinchStartScale = 1;
 
 function showCopy() {
   showScreen('copy');
   startCamera();
+}
+
+function exitCopy() {
+  stopCamera();
+  showScreen('home');
+}
+
+function exitCopyToFlow() {
+  stopCamera();
+  showScreen('upload');
 }
 
 async function startCamera() {
@@ -317,6 +371,15 @@ function stopCamera() {
   if (copyStream) { copyStream.getTracks().forEach(t => t.stop()); copyStream = null; }
 }
 
+// Panel toggle
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('copy-panel').classList.toggle('open', panelOpen);
+  document.getElementById('copy-toggle').textContent = panelOpen ? '✕' : '⚙️';
+  const hasImg = document.getElementById('copy-overlay').style.display !== 'none';
+  document.getElementById('copy-inds').style.display = (!panelOpen && hasImg) ? 'flex' : 'none';
+}
+
 function loadCopyImage(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -325,32 +388,79 @@ function loadCopyImage(e) {
     const img = document.getElementById('copy-overlay');
     img.src = ev.target.result;
     img.style.display = 'block';
-    updateOverlay();
+    ovX = 0; ovY = 0; ovScale = 1; ovRot = 0; ovOp = 0.5;
+    document.getElementById('sl-op').value  = 50;
+    document.getElementById('sl-sc').value  = 100;
+    document.getElementById('sl-rot').value = 0;
+    applyOverlay();
   };
   reader.readAsDataURL(file);
 }
 
 function updateOverlay() {
-  const op  = document.getElementById('sl-op').value;
-  const sc  = document.getElementById('sl-sc').value;
-  const rot = document.getElementById('sl-rot').value;
-  document.getElementById('lbl-op').textContent  = op + '%';
-  document.getElementById('lbl-sc').textContent  = sc + '%';
-  document.getElementById('lbl-rot').textContent = rot + '°';
-  const img = document.getElementById('copy-overlay');
-  img.style.opacity   = op / 100;
-  img.style.transform = 'scale(' + (sc/100) + ') rotate(' + rot + 'deg)';
+  ovOp  = document.getElementById('sl-op').value / 100;
+  ovScale = document.getElementById('sl-sc').value / 100;
+  ovRot = parseInt(document.getElementById('sl-rot').value);
+  applyOverlay();
 }
 
-// Parar cámara al salir de ArtyCopy
-document.querySelectorAll('[onclick]').forEach(el => {
-  const orig = el.getAttribute('onclick');
-  if (orig && orig.includes('showScreen') && !orig.includes('copy')) {
-    el.addEventListener('click', () => { if (copyStream) stopCamera(); });
-  }
-});
+function applyOverlay() {
+  const img = document.getElementById('copy-overlay');
+  const op  = Math.round(ovOp * 100);
+  const sc  = Math.round(ovScale * 100);
+  document.getElementById('lbl-op').textContent  = op + '%';
+  document.getElementById('lbl-sc').textContent  = sc + '%';
+  document.getElementById('lbl-rot').textContent = ovRot + '°';
+  document.getElementById('ind-op').textContent  = 'Op: ' + op + '%';
+  document.getElementById('ind-sc').textContent  = 'Sc: ' + sc + '%';
+  document.getElementById('ind-rot').textContent = 'Rot: ' + ovRot + '°';
+  img.style.opacity = ovOp;
+  img.style.transform = 'translate(calc(-50% + ' + ovX + 'px), calc(-50% + ' + ovY + 'px)) scale(' + ovScale + ') rotate(' + ovRot + 'deg)';
+}
 
-// ── ArtyFlow: Cámara ──────────────────────────────────────────────
+// ── Touch: drag + pinch ───────────────────────────────────────────
+const canvas = document.getElementById('copy-canvas');
+
+function getTouchDist(t) {
+  return Math.hypot(t[1].clientX - t[0].clientX, t[1].clientY - t[0].clientY);
+}
+
+canvas.addEventListener('touchstart', (e) => {
+  if (e.target.closest('.copy-panel') || e.target.closest('.copy-toggle-btn') || e.target.closest('.copy-header')) return;
+  if (e.touches.length === 1) {
+    dragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    dragOvX = ovX; dragOvY = ovY;
+  } else if (e.touches.length === 2) {
+    pinching = true; dragging = false;
+    pinchStartDist = getTouchDist(e.touches);
+    pinchStartScale = ovScale;
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+  if (e.target.closest('.copy-panel') || e.target.closest('.copy-toggle-btn')) return;
+  if (e.touches.length === 1 && dragging && !pinching) {
+    ovX = dragOvX + (e.touches[0].clientX - dragStartX);
+    ovY = dragOvY + (e.touches[0].clientY - dragStartY);
+    applyOverlay();
+  } else if (e.touches.length === 2 && pinching) {
+    const dist = getTouchDist(e.touches);
+    ovScale = Math.max(0.1, Math.min(5, pinchStartScale * (dist / pinchStartDist)));
+    document.getElementById('sl-sc').value = Math.round(ovScale * 100);
+    applyOverlay();
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchend', () => {
+  dragging = false;
+  if (event && event.touches && event.touches.length < 2) pinching = false;
+}, { passive: true });
+
+// ══════════════════════════════════════════════════════════════════
+// ARTYFLOW
+// ══════════════════════════════════════════════════════════════════
 document.getElementById('file-camera').addEventListener('change', e => handleFile(e.target.files[0]));
 
 function handleFile(file) {
@@ -370,7 +480,6 @@ function handleFile(file) {
   reader.readAsDataURL(file);
 }
 
-// ── Consent ───────────────────────────────────────────────────────
 function toggleConsent() {
   consentChecked = !consentChecked;
   document.getElementById('consent-check').checked = consentChecked;
@@ -387,17 +496,14 @@ function setContact(type) {
   inp.placeholder = type === 'email' ? 'tu@email.com' : '+34 600 000 000';
 }
 
-// ── Numerología ───────────────────────────────────────────────────
 function calcLifePath(dateStr) {
   const digits = dateStr.replace(/-/g,'').split('').map(Number);
   let sum = digits.reduce((a,b) => a+b, 0);
-  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33) {
+  while (sum > 9 && sum !== 11 && sum !== 22 && sum !== 33)
     sum = String(sum).split('').map(Number).reduce((a,b) => a+b, 0);
-  }
   return sum;
 }
 
-// ── Comprimir imagen ──────────────────────────────────────────────
 function compressImage() {
   return new Promise((res) => {
     const img = new Image();
@@ -415,7 +521,6 @@ function compressImage() {
   });
 }
 
-// ── Análisis ──────────────────────────────────────────────────────
 async function startAnalysis() {
   document.getElementById('form-error').textContent = '';
   const name      = document.getElementById('user-name').value.trim();
@@ -423,26 +528,17 @@ async function startAnalysis() {
   const contacto  = document.getElementById('contact-input').value.trim();
   let lifePath = null, lpDesc = '';
   if (birthDate) { lifePath = calcLifePath(birthDate); lpDesc = LP[lifePath] || ''; }
-
   document.getElementById('result-greeting').textContent = name ? 'Tu lectura de hoy, ' + name : 'Tu lectura de hoy';
   document.getElementById('analyzing-sub').textContent = birthDate
     ? 'Cruzando energía numerológica con expresión pictórica'
     : 'Analizando colores, trazos y energía';
-
   showScreen('analyzing');
-
   try {
     const imageBase64 = await compressImage();
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        imageBase64, mimeType: 'image/jpeg',
-        lifePath, lpDesc, userName: name,
-        contacto, tipoContacto: contactType,
-        fechaNacimiento: birthDate,
-        consentimiento: consentChecked,
-      }),
+      body: JSON.stringify({ imageBase64, mimeType: 'image/jpeg', lifePath, lpDesc, userName: name, contacto, tipoContacto: contactType, fechaNacimiento: birthDate, consentimiento: consentChecked }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error del servidor');
@@ -453,7 +549,6 @@ async function startAnalysis() {
   }
 }
 
-// ── Render resultado ──────────────────────────────────────────────
 function renderResult(text, lifePath) {
   if (lifePath && LP[lifePath]) {
     document.getElementById('lp-badge-wrap').innerHTML =
