@@ -1,196 +1,363 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>ArtyFlow · Tu arte habla</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>ArtySuite · ArtyVinos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #f7f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden;background:#f7f7f5;font-family:'DM Sans',sans-serif}
+    :root{--m:#D4006B;--t:#00B4B4;--dark:#111}
 
-    .page { display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; min-height: 100vh; }
+    .screen{display:none;position:fixed;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .screen.active{display:flex;flex-direction:column}
 
-    .logo { text-align: center; margin-bottom: 0.2rem; }
-    .logo-arty { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #111; }
-    .logo-flow { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #D4006B; }
-    .logo-dot  { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #00B4B4; margin-left: 3px; vertical-align: super; }
-    .tagline   { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #aaa; margin-bottom: 2rem; }
+    /* ── HOME ── */
+    #screen-home{background:var(--dark);align-items:center;justify-content:center;padding:2rem 1.5rem}
+    .home-logo{text-align:center;margin-bottom:0.5rem}
+    .home-logo .arty{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:#fff}
+    .home-logo .suite{font-family:'Playfair Display',serif;font-size:3rem;font-weight:700;color:var(--m)}
+    .home-logo .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--t);margin-left:4px;vertical-align:super}
+    .home-tagline{font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-align:center;margin-bottom:3rem}
+    .home-cards{width:100%;max-width:400px;display:flex;flex-direction:column;gap:1rem}
+    .app-card{border-radius:18px;padding:1.6rem 1.4rem;cursor:pointer;transition:transform 0.15s;active:scale(0.98)}
+    .app-card:active{transform:scale(0.97)}
+    .app-card-copy{background:linear-gradient(135deg,#00B4B4,#007f7f)}
+    .app-card-flow{background:linear-gradient(135deg,#D4006B,#8f0048)}
+    .app-card-num{font-family:'Playfair Display',serif;font-size:1rem;color:rgba(255,255,255,0.6);margin-bottom:0.3rem}
+    .app-card-name{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:#fff;margin-bottom:0.5rem}
+    .app-card-desc{font-size:0.85rem;color:rgba(255,255,255,0.75);line-height:1.5}
+    .app-card-arrow{font-size:1.4rem;margin-top:1rem;color:rgba(255,255,255,0.5)}
+    .home-footer{color:rgba(255,255,255,0.2);font-size:0.68rem;margin-top:2.5rem;text-align:center}
 
-    .card { background: #fff; border-radius: 20px; padding: 1.8rem 1.6rem; width: 100%; max-width: 460px; box-shadow: 0 2px 24px rgba(0,0,0,0.08); animation: fadeIn 0.4s ease; }
+    /* ── ARTYCOPY ── */
+    #screen-copy{background:#000;align-items:stretch}
+    .copy-header{background:#111;padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .copy-header-logo{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff}
+    .copy-header-logo span{color:var(--t)}
+    .copy-back{background:none;border:none;color:rgba(255,255,255,0.5);font-size:0.85rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+    .copy-canvas-wrap{flex:1;position:relative;overflow:hidden;min-height:60vh}
+    #copy-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    #copy-overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+    .copy-controls{background:#111;padding:1.2rem;flex-shrink:0}
+    .copy-ctrl-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem}
+    .copy-ctrl-label{font-size:0.72rem;color:rgba(255,255,255,0.4);width:70px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.08em}
+    .copy-slider{flex:1;accent-color:var(--t);height:3px}
+    .copy-ctrl-val{font-size:0.75rem;color:rgba(255,255,255,0.5);width:35px;text-align:right}
+    .copy-btn-row{display:flex;gap:0.7rem;margin-top:0.5rem}
+    .copy-btn{flex:1;padding:0.8rem;border-radius:12px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700}
+    .copy-btn-img{background:var(--t);color:#fff}
+    .copy-btn-flow{background:var(--m);color:#fff}
+    .copy-hint{font-size:0.73rem;color:rgba(255,255,255,0.3);text-align:center;margin-top:0.7rem}
 
-    .dropzone { border: 2px dashed #ddd; border-radius: 14px; padding: 2.5rem 1rem; text-align: center; cursor: pointer; background: #fafafa; transition: all 0.2s; }
-    .dropzone.over, .dropzone:hover { border-color: #D4006B; background: rgba(212,0,107,0.03); }
-    .dropzone-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
-    .dropzone-title { font-family: 'Playfair Display', serif; color: #D4006B; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.3rem; }
-    .dropzone-sub   { color: #bbb; font-size: 0.78rem; }
+    /* ── ARTYFLOW: UPLOAD ── */
+    #screen-upload{background:#fff;align-items:stretch}
+    .upload-top{background:var(--dark);flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem 2.5rem;position:relative;min-height:58vh}
+    .upload-top::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:40px;background:#fff;border-radius:32px 32px 0 0}
+    .logo-upload{position:absolute;top:1.5rem;left:50%;transform:translateX(-50%);white-space:nowrap;display:flex;align-items:center;gap:0}
+    .logo-upload .back-btn{background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.8rem;cursor:pointer;font-family:'DM Sans',sans-serif;position:absolute;left:-4rem;top:50%;transform:translateY(-50%)}
+    .logo-upload .arty{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:#fff}
+    .logo-upload .flow{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:700;color:var(--m)}
+    .logo-upload .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--t);margin-left:3px;vertical-align:super}
+    .upload-headline{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:#fff;text-align:center;line-height:1.15;margin-bottom:1rem}
+    .upload-headline em{font-style:italic;color:var(--m)}
+    .upload-sub{color:rgba(255,255,255,0.75);font-size:1.05rem;font-weight:700;text-align:center;line-height:1.6;max-width:300px}
+    .upload-bottom{background:#fff;padding:2rem 1.5rem 3rem;display:flex;flex-direction:column;gap:0.9rem}
+    .btn-camera{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;background:var(--m);color:#fff;letter-spacing:0.03em;box-shadow:0 6px 20px rgba(212,0,107,0.3);display:flex;align-items:center;justify-content:center;gap:0.6rem}
+    .btn-camera svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .upload-note{font-size:0.92rem;font-weight:700;color:#555;text-align:center;line-height:1.55}
+    .error-msg{color:var(--m);font-size:0.82rem;text-align:center;min-height:1.2rem}
 
-    .preview-img { width: 100%; border-radius: 12px; margin-bottom: 1.2rem; max-height: 200px; object-fit: cover; border: 1px solid #eee; display: none; }
+    /* ── ARTYFLOW: FORM ── */
+    #screen-form{background:#f7f7f5;align-items:center;padding:0 0 4rem}
+    .form-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;position:relative;text-align:center}
+    .form-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
+    .form-header .logo-small{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:1rem}
+    .form-header .logo-small span{color:var(--m)}
+    .preview-img{width:100%;max-width:340px;height:180px;object-fit:cover;border-radius:14px;border:3px solid rgba(255,255,255,0.15);display:none;margin:0 auto}
+    .form-card{background:#fff;border-radius:20px;padding:1.8rem 1.5rem;width:calc(100% - 2rem);max-width:440px;box-shadow:0 2px 20px rgba(0,0,0,0.07);margin-top:-1rem}
+    .field-label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--t);margin-bottom:0.45rem;margin-top:1.1rem}
+    .field-label:first-child{margin-top:0}
+    input[type="text"],input[type="date"],input[type="email"],input[type="tel"]{width:100%;border:1.5px solid #e8e8e8;border-radius:10px;padding:0.75rem 1rem;font-size:0.95rem;color:#111;background:#fff;outline:none;font-family:'DM Sans',sans-serif;transition:border-color 0.2s}
+    input:focus{border-color:var(--t)}
+    .field-note{font-size:0.72rem;color:#bbb;margin-top:0.4rem;font-style:italic}
+    .divider{border:none;border-top:1px solid #f0f0f0;margin:1.4rem 0}
+    .consent-box{display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;background:#fafafa;border:1.5px solid #eee;border-radius:12px;padding:0.9rem 1rem;transition:border-color 0.2s}
+    .consent-box.checked{border-color:var(--t);background:rgba(0,180,180,0.04)}
+    .consent-box input{width:18px;height:18px;accent-color:var(--t);flex-shrink:0;margin-top:2px;cursor:pointer}
+    .consent-text{font-size:0.87rem;color:#444;line-height:1.5}
+    .contact-section{margin-top:1rem}
+    .contact-toggle{display:flex;gap:0.5rem;margin-bottom:0.7rem}
+    .contact-btn{flex:1;padding:0.55rem;border-radius:10px;border:1.5px solid #e8e8e8;background:#fff;color:#999;cursor:pointer;font-size:0.85rem;font-family:'DM Sans',sans-serif;transition:all 0.2s}
+    .contact-btn.active{border-color:var(--t);background:rgba(0,180,180,0.07);color:var(--t);font-weight:700}
+    .btn-primary{width:100%;padding:1rem;border-radius:14px;border:none;cursor:pointer;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;background:var(--m);color:#fff;letter-spacing:0.04em;box-shadow:0 4px 16px rgba(212,0,107,0.25);margin-top:1.6rem}
+    .btn-outline{width:100%;padding:0.85rem;border-radius:14px;border:1.5px solid #e8e8e8;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.9rem;background:#fff;color:#999;margin-top:0.7rem}
 
-    .field-label { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #00B4B4; margin-bottom: 0.45rem; margin-top: 1.1rem; }
-    .field-note  { font-size: 0.72rem; color: #bbb; margin-top: 0.4rem; font-style: italic; }
+    /* ── ANALIZANDO ── */
+    #screen-analyzing{background:var(--dark);align-items:center;justify-content:center;text-align:center;padding:2rem}
+    .spinner{width:60px;height:60px;border-radius:50%;border:3px solid rgba(255,255,255,0.1);border-top-color:var(--m);animation:spin 0.9s linear infinite;margin:0 auto 1.8rem}
+    .analyzing-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:#fff;margin-bottom:0.6rem}
+    .analyzing-sub{color:rgba(255,255,255,0.4);font-size:0.88rem;line-height:1.6;max-width:260px;margin:0 auto}
 
-    input[type="date"], input[type="email"], input[type="tel"] {
-      width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
-      padding: 0.75rem 1rem; font-size: 0.95rem; color: #111;
-      background: #fff; outline: none; font-family: 'DM Sans', sans-serif;
-    }
+    /* ── RESULTADO ── */
+    #screen-result{background:#f7f7f5;align-items:center;padding:0 0 4rem}
+    .result-header{width:100%;background:var(--dark);padding:2rem 1.5rem 3.5rem;text-align:center;position:relative}
+    .result-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:#f7f7f5;border-radius:24px 24px 0 0}
+    .result-header .logo-small{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;margin-bottom:1rem}
+    .result-header .logo-small span{color:var(--m)}
+    .result-preview{width:100%;max-width:340px;height:180px;object-fit:cover;border-radius:14px;border:3px solid rgba(255,255,255,0.15);margin:0 auto;display:none}
+    .result-card{background:#fff;border-radius:20px;padding:1.8rem 1.5rem;width:calc(100% - 2rem);max-width:440px;box-shadow:0 2px 20px rgba(0,0,0,0.07);margin-top:-1rem}
+    .result-greeting{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#111;margin-bottom:0.5rem}
+    .lp-badge{display:inline-flex;align-items:center;gap:0.4rem;background:rgba(0,180,180,0.08);border:1px solid rgba(0,180,180,0.3);border-radius:20px;padding:0.3rem 0.9rem;font-size:0.78rem;color:var(--t);font-weight:700;margin-bottom:1rem}
+    .section-title{font-family:'Playfair Display',serif;color:var(--m);font-weight:700;font-size:0.92rem;margin:1.3rem 0 0.4rem;border-left:3px solid var(--t);padding-left:0.6rem}
+    .section-body{color:#333;font-size:0.92rem;line-height:1.75}
+    .saved-msg{margin-top:1.2rem;padding:0.8rem 1rem;background:rgba(0,180,180,0.06);border:1px solid rgba(0,180,180,0.2);border-radius:10px;font-size:0.8rem;color:var(--t);font-weight:500}
+    .footer{color:#ccc;font-size:0.68rem;margin-top:1.5rem;text-align:center;padding:0 1rem}
 
-    .divider { border: none; border-top: 1px solid #f0f0f0; margin: 1.4rem 0; }
-
-    .consent-box { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; background: #f9f9f9; border: 1.5px solid #eee; border-radius: 12px; padding: 0.9rem 1rem; transition: border-color 0.2s; }
-    .consent-box.checked { border-color: #00B4B4; }
-    .consent-box input { width: 18px; height: 18px; accent-color: #00B4B4; flex-shrink: 0; margin-top: 2px; cursor: pointer; }
-    .consent-text { font-size: 0.87rem; color: #444; line-height: 1.5; }
-
-    .contact-section { margin-top: 1rem; animation: fadeIn 0.3s ease; }
-    .contact-toggle  { display: flex; gap: 0.5rem; margin-bottom: 0.7rem; }
-    .contact-btn { flex: 1; padding: 0.55rem; border-radius: 10px; border: 1.5px solid #ddd; background: #fff; color: #999; cursor: pointer; font-size: 0.85rem; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
-    .contact-btn.active { border-color: #00B4B4; background: rgba(0,180,180,0.07); color: #00B4B4; font-weight: 700; }
-
-    .btn-primary { width: 100%; padding: 0.9rem; border-radius: 12px; border: none; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: #D4006B; color: #fff; letter-spacing: 0.04em; box-shadow: 0 4px 14px rgba(212,0,107,0.25); margin-top: 1.6rem; transition: opacity 0.2s; }
-    .btn-primary:hover { opacity: 0.9; }
-    .btn-outline { width: 100%; padding: 0.9rem; border-radius: 12px; border: 1.5px solid #D4006B; cursor: pointer; font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; background: #fff; color: #D4006B; letter-spacing: 0.04em; margin-top: 0.7rem; transition: opacity 0.2s; }
-
-    .error-msg { color: #D4006B; font-size: 0.82rem; margin-top: 1rem; text-align: center; }
-
-    /* Spinner */
-    .spinner-wrap { text-align: center; padding: 3rem 0; }
-    .spinner { width: 52px; height: 52px; border-radius: 50%; border: 3px solid #eee; border-top-color: #D4006B; margin: 0 auto 1.4rem; animation: spin 0.8s linear infinite; }
-    .spinner-title { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: #111; margin-bottom: 0.5rem; }
-    .spinner-sub   { color: #bbb; font-size: 0.82rem; }
-
-    /* Result */
-    .result-title  { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: #111; margin-bottom: 0.5rem; }
-    .lp-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(0,180,180,0.08); border: 1px solid rgba(0,180,180,0.3); border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.78rem; color: #00B4B4; font-weight: 700; margin-bottom: 0.8rem; }
-    .section-title { font-family: 'Playfair Display', serif; color: #D4006B; font-weight: 700; font-size: 0.95rem; margin: 1.2rem 0 0.4rem; border-left: 3px solid #00B4B4; padding-left: 0.6rem; }
-    .section-body  { color: #333; font-size: 0.92rem; line-height: 1.75; }
-    .saved-msg { margin-top: 1.4rem; padding: 0.8rem 1rem; background: rgba(0,180,180,0.06); border: 1px solid rgba(0,180,180,0.25); border-radius: 10px; font-size: 0.8rem; color: #00B4B4; font-weight: 500; }
-
-    .footer { color: #ccc; font-size: 0.7rem; margin-top: 1.8rem; text-align: center; }
-
-    /* Screens */
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    @keyframes spin    { to { transform: rotate(360deg); } }
-    @keyframes fadeIn  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   </style>
 </head>
 <body>
-<div class="page">
-  <div class="logo">
-    <span class="logo-arty">Arty</span><span class="logo-flow">Flow</span><span class="logo-dot"></span>
+
+<!-- ══ HOME ══ -->
+<div class="screen active" id="screen-home">
+  <div class="home-logo">
+    <span class="arty">Arty</span><span class="suite">Suite</span><span class="dot"></span>
   </div>
-  <p class="tagline">by ArtyVinos · Tu arte habla</p>
+  <p class="home-tagline">by ArtyVinos</p>
 
-  <div class="card">
-
-    <!-- PANTALLA 1: SUBIR IMAGEN -->
-    <div class="screen active" id="screen-upload">
-      <p style="text-align:center;color:#666;font-size:0.92rem;margin-bottom:1.4rem;line-height:1.6;">
-        Sube una foto de tu obra y descubre lo que dice sobre ti esta noche.
-      </p>
-      <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()">
-        <div class="dropzone-icon">🎨</div>
-        <p class="dropzone-title">Toca para subir tu obra</p>
-        <p class="dropzone-sub">JPG o PNG desde tu carrete</p>
-      </div>
-      <input type="file" id="file-input" accept="image/*" style="display:none" />
-      <p class="error-msg" id="upload-error"></p>
+  <div class="home-cards">
+    <div class="app-card app-card-copy" onclick="showCopy()">
+      <div class="app-card-num">01</div>
+      <div class="app-card-name">ArtyCopy</div>
+      <div class="app-card-desc">Usa la cámara para calcar tu dibujo sobre el lienzo. Tu guía invisible.</div>
+      <div class="app-card-arrow">→</div>
     </div>
-
-    <!-- PANTALLA 2: FORMULARIO -->
-    <div class="screen" id="screen-form">
-      <img class="preview-img" id="preview-img" alt="Tu obra" />
-
-      <label class="field-label">Fecha de nacimiento</label>
-      <input type="date" id="birth-date" />
-      <p class="field-note">Solo para tu lectura numerologica. No la almacenamos.</p>
-
-      <hr class="divider" />
-
-      <div class="consent-box" id="consent-box" onclick="toggleConsent()">
-        <input type="checkbox" id="consent-check" onclick="event.stopPropagation();toggleConsent()" />
-        <span class="consent-text">Quiero seguir conociendo lo que ArtyVinos puede ofrecerme en el futuro</span>
-      </div>
-
-      <div class="contact-section" id="contact-section" style="display:none">
-        <label class="field-label">Como prefieres que te contactemos</label>
-        <div class="contact-toggle">
-          <button class="contact-btn active" id="btn-email" onclick="setContact('email')">📧 Email</button>
-          <button class="contact-btn" id="btn-whatsapp" onclick="setContact('whatsapp')">💬 WhatsApp</button>
-        </div>
-        <input type="email" id="contact-input" placeholder="tu@email.com" />
-      </div>
-
-      <p class="error-msg" id="form-error"></p>
-      <button class="btn-primary" onclick="startAnalysis()">Revelar mi lectura ✨</button>
-      <button class="btn-outline" onclick="showScreen('upload')">Cambiar imagen</button>
+    <div class="app-card app-card-flow" onclick="showScreen('upload')">
+      <div class="app-card-num">02</div>
+      <div class="app-card-name">ArtyFlow</div>
+      <div class="app-card-desc">Fotografía tu obra terminada y descubre lo que dice sobre ti.</div>
+      <div class="app-card-arrow">→</div>
     </div>
-
-    <!-- PANTALLA 3: ANALIZANDO -->
-    <div class="screen" id="screen-analyzing">
-      <div class="spinner-wrap">
-        <div class="spinner"></div>
-        <p class="spinner-title">Leyendo tu obra...</p>
-        <p class="spinner-sub" id="spinner-sub">Analizando colores, trazos y energia</p>
-      </div>
-    </div>
-
-    <!-- PANTALLA 4: RESULTADO -->
-    <div class="screen" id="screen-result">
-      <img class="preview-img" id="result-img" alt="Tu obra" />
-      <p class="result-title">Tu lectura de esta noche</p>
-      <div id="lp-badge"></div>
-      <div id="result-text"></div>
-      <div class="saved-msg" id="saved-msg" style="display:none">
-        ✅ Te avisaremos con las proximas novedades de ArtyVinos
-      </div>
-      <hr class="divider" />
-      <button class="btn-primary" onclick="reset()">Nueva lectura 🎨</button>
-    </div>
-
   </div>
-  <p class="footer">ArtyVinos · Calle del Capitan Segarra 25, Alicante</p>
+
+  <p class="home-footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
+</div>
+
+<!-- ══ ARTYCOPY ══ -->
+<div class="screen" id="screen-copy">
+  <div class="copy-header">
+    <button class="copy-back" onclick="showScreen('home')">← Inicio</button>
+    <div class="copy-header-logo">Arty<span>Copy</span></div>
+    <div style="width:60px"></div>
+  </div>
+
+  <div class="copy-canvas-wrap">
+    <video id="copy-video" autoplay playsinline muted></video>
+    <img id="copy-overlay" alt="" style="opacity:0.5;display:none"/>
+  </div>
+
+  <div class="copy-controls">
+    <div class="copy-ctrl-row">
+      <span class="copy-ctrl-label">Opacidad</span>
+      <input type="range" class="copy-slider" id="sl-op" min="0" max="100" value="50" oninput="updateOverlay()"/>
+      <span class="copy-ctrl-val" id="lbl-op">50%</span>
+    </div>
+    <div class="copy-ctrl-row">
+      <span class="copy-ctrl-label">Tamaño</span>
+      <input type="range" class="copy-slider" id="sl-sc" min="20" max="200" value="100" oninput="updateOverlay()"/>
+      <span class="copy-ctrl-val" id="lbl-sc">100%</span>
+    </div>
+    <div class="copy-ctrl-row">
+      <span class="copy-ctrl-label">Rotación</span>
+      <input type="range" class="copy-slider" id="sl-rot" min="-180" max="180" value="0" oninput="updateOverlay()"/>
+      <span class="copy-ctrl-val" id="lbl-rot">0°</span>
+    </div>
+    <div class="copy-btn-row">
+      <button class="copy-btn copy-btn-img" onclick="document.getElementById('copy-file').click()">
+        📂 Cargar imagen
+      </button>
+      <button class="copy-btn copy-btn-flow" onclick="showScreen('upload')">
+        🎨 Analizar obra →
+      </button>
+    </div>
+    <p class="copy-hint">Carga el dibujo que quieres calcar y ajusta opacidad y tamaño</p>
+  </div>
+  <input type="file" id="copy-file" accept="image/*" style="display:none" onchange="loadCopyImage(event)"/>
+</div>
+
+<!-- ══ ARTYFLOW: UPLOAD ══ -->
+<div class="screen" id="screen-upload">
+  <div class="upload-top">
+    <div class="logo-upload">
+      <span class="arty">Arty</span><span class="flow">Flow</span><span class="dot"></span>
+    </div>
+    <h1 class="upload-headline">Tu obra<br>te <em>habla</em><br>hoy</h1>
+    <p class="upload-sub">Fotografía tu cuadro y descubre lo que dice sobre ti a través del color, el trazo y tu energía numerológica.</p>
+  </div>
+  <div class="upload-bottom">
+    <button class="btn-camera" onclick="document.getElementById('file-camera').click()">
+      <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Fotografiar mi obra
+    </button>
+    <input type="file" id="file-camera" accept="image/*" capture="environment" style="display:none"/>
+    <p class="upload-note">Apunta con la cámara trasera a tu cuadro<br>y pulsa el botón para fotografiarlo</p>
+    <button class="btn-outline" onclick="showScreen('home')" style="margin-top:0">← Volver al inicio</button>
+    <p class="error-msg" id="upload-error"></p>
+  </div>
+</div>
+
+<!-- ══ ARTYFLOW: FORM ══ -->
+<div class="screen" id="screen-form">
+  <div class="form-header">
+    <div class="logo-small">Arty<span>Flow</span></div>
+    <img class="preview-img" id="preview-img" alt="Tu obra"/>
+  </div>
+  <div class="form-card">
+    <label class="field-label">Tu nombre</label>
+    <input type="text" id="user-name" placeholder="¿Cómo te llamas?" autocomplete="given-name"/>
+
+    <label class="field-label">Fecha de nacimiento</label>
+    <input type="date" id="birth-date" max=""/>
+    <p class="field-note">Solo para tu lectura numerológica. No la almacenamos.</p>
+
+    <hr class="divider"/>
+
+    <div class="consent-box" id="consent-box" onclick="toggleConsent()">
+      <input type="checkbox" id="consent-check" onclick="event.stopPropagation();toggleConsent()"/>
+      <span class="consent-text">Quiero seguir conociendo lo que ArtyVinos puede ofrecerme en el futuro</span>
+    </div>
+
+    <div class="contact-section" id="contact-section" style="display:none">
+      <label class="field-label">¿Cómo prefieres que te contactemos?</label>
+      <div class="contact-toggle">
+        <button class="contact-btn active" id="btn-email" onclick="setContact('email')">Email</button>
+        <button class="contact-btn" id="btn-whatsapp" onclick="setContact('whatsapp')">WhatsApp</button>
+      </div>
+      <input type="email" id="contact-input" placeholder="tu@email.com"/>
+    </div>
+
+    <p class="error-msg" id="form-error"></p>
+    <button class="btn-primary" onclick="startAnalysis()">Revelar mi lectura ✨</button>
+    <button class="btn-outline" onclick="showScreen('upload')">Volver a fotografiar</button>
+  </div>
+  <p class="footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
+</div>
+
+<!-- ══ ANALIZANDO ══ -->
+<div class="screen" id="screen-analyzing">
+  <div class="spinner"></div>
+  <p class="analyzing-title">Leyendo tu obra...</p>
+  <p class="analyzing-sub" id="analyzing-sub">Analizando colores, trazos y energía</p>
+</div>
+
+<!-- ══ RESULTADO ══ -->
+<div class="screen" id="screen-result">
+  <div class="result-header">
+    <div class="logo-small">Arty<span>Flow</span></div>
+    <img class="result-preview" id="result-img" alt="Tu obra"/>
+  </div>
+  <div class="result-card">
+    <p class="result-greeting" id="result-greeting">Tu lectura de hoy</p>
+    <div id="lp-badge-wrap"></div>
+    <div id="result-text"></div>
+    <div class="saved-msg" id="saved-msg" style="display:none">
+      ✅ Te avisaremos con las próximas novedades de ArtyVinos
+    </div>
+    <hr class="divider"/>
+    <button class="btn-primary" onclick="showScreen('home')">Volver al inicio 🏠</button>
+  </div>
+  <p class="footer">ArtyVinos · Calle del Capitán Segarra 25, Alicante</p>
 </div>
 
 <script>
-// ── Estado ───────────────────────────────────────────────────────
-let imageFile = null;
+// ── Estado global ─────────────────────────────────────────────────
 let imageDataUrl = null;
-let compressedB64 = null;
 let consentChecked = false;
 let contactType = 'email';
 
+document.getElementById('birth-date').max = new Date().toISOString().split('T')[0];
+
 const LP = {
-  1:'Liderazgo e independencia creadora', 2:'Sensibilidad, intuicion y armonia',
-  3:'Expresion, creatividad y alegria',   4:'Solidez, metodo y construccion',
-  5:'Libertad, aventura y transformacion',6:'Amor, cuidado y belleza como mision',
-  7:'Profundidad, misterio e introspeccion', 8:'Poder, ambicion y manifestacion',
-  9:'Compasion, sabiduria y entrega', 11:'Numero maestro - Intuicion elevada',
-  22:'Numero maestro - Gran constructor',  33:'Numero maestro - Maestro compasivo'
+  1:'Liderazgo e independencia creadora',2:'Sensibilidad, intuición y armonía',
+  3:'Expresión, creatividad y alegría',4:'Solidez, método y construcción',
+  5:'Libertad, aventura y transformación',6:'Amor, cuidado y belleza como misión',
+  7:'Profundidad, misterio e introspección',8:'Poder, ambición y manifestación',
+  9:'Compasión, sabiduría y entrega',11:'Número maestro · Intuición elevada',
+  22:'Número maestro · Gran constructor',33:'Número maestro · Maestro compasivo'
 };
 
-// ── Pantallas ────────────────────────────────────────────────────
+// ── Navegación ────────────────────────────────────────────────────
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-// ── Drag & drop ──────────────────────────────────────────────────
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); handleFile(e.dataTransfer.files[0]); });
-document.getElementById('file-input').addEventListener('change', e => handleFile(e.target.files[0]));
+// ── ArtyCopy ──────────────────────────────────────────────────────
+let copyStream = null;
+
+function showCopy() {
+  showScreen('copy');
+  startCamera();
+}
+
+async function startCamera() {
+  try {
+    copyStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    document.getElementById('copy-video').srcObject = copyStream;
+  } catch(e) {
+    alert('No se pudo acceder a la cámara: ' + e.message);
+  }
+}
+
+function stopCamera() {
+  if (copyStream) { copyStream.getTracks().forEach(t => t.stop()); copyStream = null; }
+}
+
+function loadCopyImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = document.getElementById('copy-overlay');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    updateOverlay();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateOverlay() {
+  const op  = document.getElementById('sl-op').value;
+  const sc  = document.getElementById('sl-sc').value;
+  const rot = document.getElementById('sl-rot').value;
+  document.getElementById('lbl-op').textContent  = op + '%';
+  document.getElementById('lbl-sc').textContent  = sc + '%';
+  document.getElementById('lbl-rot').textContent = rot + '°';
+  const img = document.getElementById('copy-overlay');
+  img.style.opacity   = op / 100;
+  img.style.transform = 'scale(' + (sc/100) + ') rotate(' + rot + 'deg)';
+}
+
+// Parar cámara al salir de ArtyCopy
+document.querySelectorAll('[onclick]').forEach(el => {
+  const orig = el.getAttribute('onclick');
+  if (orig && orig.includes('showScreen') && !orig.includes('copy')) {
+    el.addEventListener('click', () => { if (copyStream) stopCamera(); });
+  }
+});
+
+// ── ArtyFlow: Cámara ──────────────────────────────────────────────
+document.getElementById('file-camera').addEventListener('change', e => handleFile(e.target.files[0]));
 
 function handleFile(file) {
   if (!file || !file.type.startsWith('image/')) {
     document.getElementById('upload-error').textContent = 'El archivo debe ser una imagen';
     return;
   }
-  imageFile = file;
   const reader = new FileReader();
   reader.onload = (e) => {
     imageDataUrl = e.target.result;
@@ -203,7 +370,7 @@ function handleFile(file) {
   reader.readAsDataURL(file);
 }
 
-// ── Consent ──────────────────────────────────────────────────────
+// ── Consent ───────────────────────────────────────────────────────
 function toggleConsent() {
   consentChecked = !consentChecked;
   document.getElementById('consent-check').checked = consentChecked;
@@ -220,7 +387,7 @@ function setContact(type) {
   inp.placeholder = type === 'email' ? 'tu@email.com' : '+34 600 000 000';
 }
 
-// ── Numerología ──────────────────────────────────────────────────
+// ── Numerología ───────────────────────────────────────────────────
 function calcLifePath(dateStr) {
   const digits = dateStr.replace(/-/g,'').split('').map(Number);
   let sum = digits.reduce((a,b) => a+b, 0);
@@ -230,99 +397,83 @@ function calcLifePath(dateStr) {
   return sum;
 }
 
-// ── Comprimir imagen ─────────────────────────────────────────────
+// ── Comprimir imagen ──────────────────────────────────────────────
 function compressImage() {
   return new Promise((res) => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 800;
+      const MAX = 900;
       let w = img.width, h = img.height;
       if (w > h) { if (w > MAX) { h = Math.round(h*MAX/w); w = MAX; } }
-      else        { if (h > MAX) { w = Math.round(w*MAX/h); h = MAX; } }
+      else { if (h > MAX) { w = Math.round(w*MAX/h); h = MAX; } }
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      res(canvas.toDataURL('image/jpeg', 0.75).split(',')[1]);
+      res(canvas.toDataURL('image/jpeg', 0.82).split(',')[1]);
     };
     img.src = imageDataUrl;
   });
 }
 
-// ── Análisis ─────────────────────────────────────────────────────
+// ── Análisis ──────────────────────────────────────────────────────
 async function startAnalysis() {
   document.getElementById('form-error').textContent = '';
+  const name      = document.getElementById('user-name').value.trim();
   const birthDate = document.getElementById('birth-date').value;
+  const contacto  = document.getElementById('contact-input').value.trim();
   let lifePath = null, lpDesc = '';
-  if (birthDate) {
-    lifePath = calcLifePath(birthDate);
-    lpDesc = LP[lifePath] || '';
-  }
-  document.getElementById('spinner-sub').textContent =
-    birthDate ? 'Cruzando energia numerologica con expresion pictorica' : 'Analizando colores, trazos y energia';
+  if (birthDate) { lifePath = calcLifePath(birthDate); lpDesc = LP[lifePath] || ''; }
+
+  document.getElementById('result-greeting').textContent = name ? 'Tu lectura de hoy, ' + name : 'Tu lectura de hoy';
+  document.getElementById('analyzing-sub').textContent = birthDate
+    ? 'Cruzando energía numerológica con expresión pictórica'
+    : 'Analizando colores, trazos y energía';
+
   showScreen('analyzing');
 
   try {
-    compressedB64 = await compressImage();
+    const imageBase64 = await compressImage();
     const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageBase64: compressedB64, mimeType: 'image/jpeg', lifePath, lpDesc }),
+      body: JSON.stringify({
+        imageBase64, mimeType: 'image/jpeg',
+        lifePath, lpDesc, userName: name,
+        contacto, tipoContacto: contactType,
+        fechaNacimiento: birthDate,
+        consentimiento: consentChecked,
+      }),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Error del servidor');
-    renderResult(data.result, lifePath, lpDesc);
+    renderResult(data.result, lifePath);
   } catch (err) {
     document.getElementById('form-error').textContent = 'Error: ' + err.message;
     showScreen('form');
   }
 }
 
-// ── Render resultado ─────────────────────────────────────────────
-function renderResult(text, lifePath, lpDesc) {
-  if (lifePath) {
-    document.getElementById('lp-badge').innerHTML =
-      '<div class="lp-badge">Camino de Vida ' + lifePath + ' · ' + (LP[lifePath] || lpDesc) + '</div>';
+// ── Render resultado ──────────────────────────────────────────────
+function renderResult(text, lifePath) {
+  if (lifePath && LP[lifePath]) {
+    document.getElementById('lp-badge-wrap').innerHTML =
+      '<div class="lp-badge">Camino de Vida ' + lifePath + ' · ' + LP[lifePath] + '</div>';
   } else {
-    document.getElementById('lp-badge').innerHTML = '';
+    document.getElementById('lp-badge-wrap').innerHTML = '';
   }
-
-  const TITLES = ['LO QUE TU OBRA REVELA', 'TU ESENCIA NUMEROLOGICA', 'EL MENSAJE DE TU CUADRO'];
+  const TITLES = ['LO QUE TU OBRA REVELA','TU ESENCIA NUMEROLOGICA','EL MENSAJE DE TU CUADRO'];
   const lines = text.split('\n').map(l => l.replace(/\*\*/g,'').trim()).filter(Boolean);
-  let html = '';
-  let inSection = false;
+  let html = '', inSection = false;
   for (const line of lines) {
     const isTitle = TITLES.some(t => line.toUpperCase().includes(t));
-    if (isTitle) {
-      html += '<p class="section-title">' + line + '</p>';
-      inSection = true;
-    } else if (inSection) {
-      html += '<p class="section-body">' + line + '</p>';
-    }
+    if (isTitle) { html += '<p class="section-title">' + line + '</p>'; inSection = true; }
+    else if (inSection) { html += '<p class="section-body">' + line + '</p>'; }
   }
   if (!html) html = '<p class="section-body">' + text + '</p>';
   document.getElementById('result-text').innerHTML = html;
-
-  const contact = document.getElementById('contact-input').value.trim();
-  document.getElementById('saved-msg').style.display = (consentChecked && contact) ? 'block' : 'none';
-
+  const contacto = document.getElementById('contact-input').value.trim();
+  document.getElementById('saved-msg').style.display = (consentChecked && contacto) ? 'block' : 'none';
   showScreen('result');
-}
-
-// ── Reset ────────────────────────────────────────────────────────
-function reset() {
-  imageFile = null; imageDataUrl = null; compressedB64 = null;
-  consentChecked = false; contactType = 'email';
-  document.getElementById('birth-date').value = '';
-  document.getElementById('consent-check').checked = false;
-  document.getElementById('consent-box').classList.remove('checked');
-  document.getElementById('contact-section').style.display = 'none';
-  document.getElementById('contact-input').value = '';
-  document.getElementById('file-input').value = '';
-  document.getElementById('upload-error').textContent = '';
-  document.getElementById('form-error').textContent = '';
-  document.getElementById('preview-img').style.display = 'none';
-  document.getElementById('result-img').style.display = 'none';
-  showScreen('upload');
 }
 </script>
 </body>
